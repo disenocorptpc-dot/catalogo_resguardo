@@ -34,9 +34,13 @@ class CloudDB {
     }
 
     async connectToDoc() {
+        // HARDCODED ID for Unification (The one with "Figura de accion")
+        const SHARED_ID = 'jTOMaIV83XkU8v0nmurO';
         const LOCAL_ID_KEY = 'sculpture_cloud_id_strict_v2';
-        const savedId = localStorage.getItem(LOCAL_ID_KEY);
-        console.log("📍 Checking LocalStorage ID:", savedId);
+
+        // Priority: Shared ID > LocalStorage
+        const savedId = SHARED_ID || localStorage.getItem(LOCAL_ID_KEY);
+        console.log("📍 Connecting to Shared ID:", savedId);
 
         if (savedId) {
             const ref = doc(this.db, "projects", savedId);
