@@ -75,6 +75,7 @@ function navigate(view) {
     STATE.view = view;
     renderRouter();
 }
+window.navigate = navigate;
 
 // --- VIEWS ---
 
