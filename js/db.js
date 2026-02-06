@@ -50,7 +50,12 @@ class CloudDB {
                 [key]: data,
                 is_config_doc: true,
                 name: "⚠️ SCULPTURE DATA (SYSTEM)",
-                order: 9999 // Push to end of lists
+                client: "SYSTEM INTERNAL",
+                deadline: "2099-12-31",
+                progress: 0,
+                logs: [],
+                responsible: [],
+                order: 9999
             }, { merge: true });
         } catch (e) {
             console.error("Save Error", e);
