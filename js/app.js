@@ -80,6 +80,7 @@ window.navigate = navigate;
 // --- VIEWS ---
 
 function renderInventory(container) {
+    container.innerHTML = '';
     const table = document.createElement('table');
     table.className = 'inventory-table';
 
