@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Resguardo 3D | Control de Bodega</title>
+
+    <!-- Fonts: Inter for that clean SaaS/Time Tracker look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Icons: Using Material Symbols for generic clean icons -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-box">
+                    <span class="material-symbols-rounded">category</span>
+                </div>
+                <div class="brand-text">
+                    <h1>Catálogo<span class="dim">Resguardo3D</span></h1>
+                    <span class="subtitle">Bodega Central</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-group">
+                    <label>Menu</label>
+                    <button class="nav-item active" data-view="inventory">
+                        <span class="material-symbols-rounded">inventory_2</span>
+                        Inventario
+                    </button>
+                    <!-- Future: Checkouts/Entregas separate view -->
+                </div>
+
+                <div class="nav-group">
+                    <label>Admin</label>
+                    <button class="nav-item" data-view="new-item">
+                        <span class="material-symbols-rounded">add_circle</span>
+                        Nueva Pieza
+                    </button>
+                    <button class="nav-item" onclick="alert('Configuración de Firebase pendiente')">
+                        <span class="material-symbols-rounded">settings</span>
+                        Configuración
+                    </button>
+                </div>
+            </nav>
+
+            <div class="user-footer">
+                <div class="avatar">RS</div>
+                <div class="user-info">
+                    <span class="name">Roberto S.</span>
+                    <span class="status">● Conectado</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="breadcrumbs">
+                    <span id="page-title">Inventario</span>
+                    <span id="page-subtitle" class="hidden"> / Detalle</span>
+                </div>
+                <div class="top-actions">
+                    <div class="search-wrapper">
+                        <span class="material-symbols-rounded icon">search</span>
+                        <input type="text" id="global-search" placeholder="Buscar por ID, nombre o bodega..."
+                            autocomplete="off">
+                    </div>
+                </div>
+            </header>
+
+            <div id="content-area" class="viewport">
+                <!-- Vistes inyectadas aquí -->
+            </div>
+        </main>
+    </div>
+
+    <!-- DB Service (IndexedDB to handle images locally) -->
+    <script src="js/db.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
