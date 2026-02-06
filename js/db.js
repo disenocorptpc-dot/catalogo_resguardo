@@ -2,7 +2,16 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, where, getDocs, orderBy } from "firebase/firestore";
 
-// ... (Config remains same)
+// Config from 'galactic-glenn' project
+const firebaseConfig = {
+    apiKey: "AIzaSyBq4Y-zfQvksbFe36vb0pjagNu8poHvjyg",
+    authDomain: "speed-dashboard-8a1a9.firebaseapp.com",
+    projectId: "speed-dashboard-8a1a9",
+    storageBucket: "speed-dashboard-8a1a9.firebasestorage.app",
+    messagingSenderId: "650632424816",
+    appId: "1:650632424816:web:bd37e796996ad3db9273b5",
+    measurementId: "G-WDR0Z2EDHC"
+};
 
 class CloudDB {
     constructor() {
@@ -82,18 +91,15 @@ class CloudDB {
 
     async saveImage(id, blob) {
         if (!this.docRef) return;
-        // Save as sub-collection 'chunks' inside our project doc
-        // 'chunks' is allowed by galactic-glenn rules
         try {
             const base64 = await this.blobToBase64(blob);
-            // We use 'chunks' collection name to blend in
+            // using 'chunks' collection to blend in
             const imgDoc = doc(this.db, "projects", this.docRef.id, "chunks", "img_" + id);
 
-            // Limit check
             if (base64.length > 950000) console.warn("Image might be too large");
 
             await setDoc(imgDoc, {
-                content: base64, // 'content' field is used by galactic-glenn, reusing name for safety
+                content: base64,
                 type: "image",
                 index: 0
             });
