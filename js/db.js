@@ -36,6 +36,7 @@ class CloudDB {
     async connectToDoc() {
         const LOCAL_ID_KEY = 'sculpture_cloud_id_strict_v2';
         const savedId = localStorage.getItem(LOCAL_ID_KEY);
+        console.log("📍 Checking LocalStorage ID:", savedId);
 
         if (savedId) {
             const ref = doc(this.db, "projects", savedId);
@@ -43,18 +44,25 @@ class CloudDB {
                 const snap = await getDoc(ref);
                 if (snap.exists()) {
                     this.docRef = ref;
+                    console.log("✅ RE-CONNECTED to Existing Cloud Doc:", savedId);
                     return;
+                } else {
+                    console.warn("⚠️ Saved ID not found in Cloud (Deleted?).");
                 }
-            } catch (e) { }
+            } catch (e) {
+                console.error("🚨 Reconnection Error:", e);
+                // If it's a permission error, it means we can't read our own doc?
+                // But we should be able to if rules say auth != null.
+                alert("Error al reconectar: " + e.message);
+                return;
+            }
         }
 
         try {
-            console.log("✨ Creating compliant Project Doc...");
-            // STRICT SCHEMA: No extra fields allowed by Rules
-            // Mimics exactly what Galactic Glenn creates
+            console.log("✨ Creating NEW Cloud Doc (First Time)...");
             const ref = await addDoc(collection(this.db, "projects"), {
                 name: "SCULPTURE CATALOG DATA",
-                client: "SYSTEM", // Standard field
+                client: "SYSTEM",
                 deadline: "2030-01-01",
                 progress: 0,
                 order: 9999,
@@ -62,15 +70,13 @@ class CloudDB {
                 phaseStarts: [],
                 phaseEnds: [],
                 logs: []
-                // Removed 'app_data', 'owner', 'uid' which likely triggered validation errors
             });
 
             this.docRef = ref;
             localStorage.setItem(LOCAL_ID_KEY, ref.id);
-            console.log("✅ Created & Saved ID:", ref.id);
+            console.log("✅ Created & Saved NEW ID:", ref.id);
         } catch (e) {
             console.error("❌ strict-schema creation failed", e);
-            // LAST RESORT: User private collection
             await this.tryUserCollection();
         }
     }
