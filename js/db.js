@@ -1,79 +1,88 @@
-/**
- * Simple IndexedDB Wrapper for persistency
- * Allows storing Images (Blobs) and Data without file system access
- */
-const DB_NAME = 'SculptureTrackerDB';
-const DB_VERSION = 1;
 
-class LocalDB {
+import { initializeApp } from "firebase/app";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+// Config from 'galactic-glenn' project
+const firebaseConfig = {
+    apiKey: "AIzaSyBq4Y-zfQvksbFe36vb0pjagNu8poHvjyg",
+    authDomain: "speed-dashboard-8a1a9.firebaseapp.com",
+    projectId: "speed-dashboard-8a1a9",
+    storageBucket: "speed-dashboard-8a1a9.firebasestorage.app",
+    messagingSenderId: "650632424816",
+    appId: "1:650632424816:web:bd37e796996ad3db9273b5",
+    measurementId: "G-WDR0Z2EDHC"
+};
+
+class CloudDB {
     constructor() {
-        this.db = null;
+        this.app = initializeApp(firebaseConfig);
+        this.db = getFirestore(this.app);
+        this.storage = getStorage(this.app);
+        this.docRef = doc(this.db, "sculpture_catalog", "global_state");
+        console.log("🔥 Firebase Cloud Connected");
     }
 
     async init() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-            request.onerror = (e) => reject('Database error: ' + e.target.errorCode);
-
-            request.onupgradeneeded = (e) => {
-                const db = e.target.result;
-                // Store for Application State (JSON)
-                if (!db.objectStoreNames.contains('state')) {
-                    db.createObjectStore('state', { keyPath: 'key' });
-                }
-                // Store for Images (Blob)
-                if (!db.objectStoreNames.contains('images')) {
-                    db.createObjectStore('images', { keyPath: 'id' });
-                }
-            };
-
-            request.onsuccess = (e) => {
-                this.db = e.target.result;
-                resolve(this);
-            };
-        });
+        // No local open needed, connection is stateless
+        return this;
     }
 
     async saveState(key, data) {
-        return this.put('state', { key, data });
+        // We sync the entire 'items' array to a single field 'data'
+        // 'key' arg is usually 'app_data' from app.js
+        try {
+            await setDoc(this.docRef, { [key]: data }, { merge: true });
+            //    console.log("☁️ Saved to Cloud");
+        } catch (e) {
+            console.error("Save Error", e);
+        }
     }
 
     async getState(key) {
-        const result = await this.get('state', key);
-        return result ? result.data : null;
+        // Initial Fetch
+        try {
+            const snap = await getDoc(this.docRef);
+            if (snap.exists()) {
+                return snap.data()[key];
+            }
+        } catch (e) {
+            console.error("Get Error", e);
+        }
+        return null;
+    }
+
+    // Optional: Realtime Listener
+    // app.js doesn't use it yet, but useful for future
+    subscribe(key, callback) {
+        return onSnapshot(this.docRef, (doc) => {
+            if (doc.exists()) callback(doc.data()[key]);
+        });
     }
 
     async saveImage(id, blob) {
-        // We store blob directly
-        return this.put('images', { id, blob });
+        try {
+            const storageRef = ref(this.storage, `images/${id}`);
+            await uploadBytes(storageRef, blob);
+            //     console.log("☁️ Image Uploaded");
+        } catch (e) {
+            console.error("Image Upload Error", e);
+        }
     }
 
     async getImage(id) {
-        const result = await this.get('images', id);
-        return result ? result.blob : null;
-    }
-
-    // Generic helpers
-    put(storeName, item) {
-        return new Promise((resolve, reject) => {
-            const tx = this.db.transaction([storeName], 'readwrite');
-            const store = tx.objectStore(storeName);
-            const req = store.put(item);
-            req.onsuccess = () => resolve();
-            req.onerror = () => reject(req.error);
-        });
-    }
-
-    get(storeName, key) {
-        return new Promise((resolve, reject) => {
-            const tx = this.db.transaction([storeName], 'readonly');
-            const store = tx.objectStore(storeName);
-            const req = store.get(key);
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-        });
+        try {
+            const storageRef = ref(this.storage, `images/${id}`);
+            const url = await getDownloadURL(storageRef);
+            // Fetch blob to maintain compatibility with app.js
+            const res = await fetch(url);
+            return await res.blob();
+        } catch (e) {
+            // console.warn("Image not found or error", e);
+            return null;
+        }
     }
 }
 
-const db = new LocalDB();
+// Export globally for app.js
+window.db = new CloudDB();
