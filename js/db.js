@@ -34,38 +34,67 @@ class CloudDB {
     }
 
     async connectToDoc() {
-        // HARDCODED ID for Unification (The one with "Figura de accion")
-        const SHARED_ID = 'jTOMaIV83XkU8v0nmurO';
-        const LOCAL_ID_KEY = 'sculpture_cloud_id_strict_v2';
+        // --- ENVIRONMENT CONFIG ---
+        const PROD_ID = 'jTOMaIV83XkU8v0nmurO';
+        const DEV_STORAGE_KEY = 'sculpture_dev_id_v1';
 
-        // Priority: Shared ID > LocalStorage
-        const savedId = SHARED_ID || localStorage.getItem(LOCAL_ID_KEY);
-        console.log("📍 Connecting to Shared ID:", savedId);
+        // Detect Environment: Real App (Vercel) vs Local Dev
+        const isProd = window.location.hostname.includes('vercel.app');
 
-        if (savedId) {
-            const ref = doc(this.db, "projects", savedId);
+        let targetId = null;
+
+        if (isProd) {
+            console.log("🏭 Running in PRODUCTION Mode");
+            targetId = PROD_ID;
+        } else {
+            console.log("🧪 Running in DEVELOPMENT Mode (Safe)");
+            targetId = localStorage.getItem(DEV_STORAGE_KEY);
+        }
+
+        console.log("📍 Connecting to ID:", targetId);
+
+        if (targetId) {
+            const ref = doc(this.db, "projects", targetId);
             try {
                 const snap = await getDoc(ref);
                 if (snap.exists()) {
                     this.docRef = ref;
-                    console.log("✅ RE-CONNECTED to Existing Cloud Doc:", savedId);
+                    console.log("✅ RE-CONNECTED to Existing Cloud Doc:", targetId);
+
+                    // Visual Indicator for DEV Mode
+                    if (!isProd) {
+                        const banner = document.createElement('div');
+                        banner.innerText = "🛠️ MODO DESARROLLO (BD Prueba)";
+                        banner.style.position = 'fixed';
+                        banner.style.bottom = '10px';
+                        banner.style.right = '10px';
+                        banner.style.background = '#F59E0B';
+                        banner.style.color = '#000';
+                        banner.style.padding = '4px 8px';
+                        banner.style.borderRadius = '4px';
+                        banner.style.fontSize = '12px';
+                        banner.style.fontWeight = 'bold';
+                        banner.style.pointerEvents = 'none';
+                        document.body.appendChild(banner);
+                    }
                     return;
                 } else {
-                    console.warn("⚠️ Saved ID not found in Cloud (Deleted?).");
+                    console.warn("⚠️ Saved ID not found in Cloud.");
                 }
             } catch (e) {
-                console.error("🚨 Reconnection Error:", e);
-                // If it's a permission error, it means we can't read our own doc?
-                // But we should be able to if rules say auth != null.
-                alert("Error al reconectar: " + e.message);
-                return;
+                console.warn("Reconnection check failed", e);
             }
         }
 
+        // If we are here, we need to create a new doc.
+        // BUT only allow creation if NOT in Prod (Prod normally relies on hardcoded ID).
+        // Actually, if PROD ID is missing/deleted, we have a bigger problem. 
+        // For Dev, we create new.
+
         try {
-            console.log("✨ Creating NEW Cloud Doc (First Time)...");
+            console.log("✨ Creating NEW Cloud Doc (Dev/First Time)...");
             const ref = await addDoc(collection(this.db, "projects"), {
-                name: "SCULPTURE CATALOG DATA",
+                name: isProd ? "SCULPTURE CATALOG DATA" : "DEV TEST DATA",
                 client: "SYSTEM",
                 deadline: "2030-01-01",
                 progress: 0,
@@ -77,7 +106,9 @@ class CloudDB {
             });
 
             this.docRef = ref;
-            localStorage.setItem(LOCAL_ID_KEY, ref.id);
+            if (!isProd) {
+                localStorage.setItem(DEV_STORAGE_KEY, ref.id);
+            }
             console.log("✅ Created & Saved NEW ID:", ref.id);
         } catch (e) {
             console.error("❌ strict-schema creation failed", e);
