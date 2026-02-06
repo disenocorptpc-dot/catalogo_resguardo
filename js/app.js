@@ -167,7 +167,7 @@ function renderInventory(container) {
                 </div>
             </td>
             <td style="display:flex; align-items:center; gap:6px;">
-                <button class="action-btn btn-secondary" style="width: auto; padding: 4px 8px; font-size: 12px;">
+                <button onclick="navigate('detail:${item.id}')" class="action-btn btn-secondary" style="width: auto; padding: 4px 8px; font-size: 12px;">
                     Ver Detalle
                 </button>
                 <button onclick="window.deleteItem('${item.id}', event)" class="action-btn" style="width: auto; padding: 4px; color: #ef4444; background: transparent; border:none;" title="Eliminar">
