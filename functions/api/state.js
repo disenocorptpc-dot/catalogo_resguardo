@@ -7,7 +7,7 @@ export async function onRequest(context) {
     if (!key) return new Response('Missing key', { status: 400 });
     
     try {
-      const stmt = env.DB.prepare('SELECT content FROM chunks WHERE id = ?').bind(`data_${key}`);
+      const stmt = env.catalogo_resguardo.prepare('SELECT content FROM chunks WHERE id = ?').bind(`data_${key}`);
       const row = await stmt.first();
       if (row) {
         return new Response(row.content, { headers: { 'Content-Type': 'application/json' } });
@@ -25,7 +25,7 @@ export async function onRequest(context) {
       const targetId = `data_${key}`;
       const contentStr = JSON.stringify(data);
       
-      const stmt = env.DB.prepare(`
+      const stmt = env.catalogo_resguardo.prepare(`
         INSERT INTO chunks (id, type, content) 
         VALUES (?, 'json_data', ?) 
         ON CONFLICT(id) DO UPDATE SET content=excluded.content, updated_at=CURRENT_TIMESTAMP

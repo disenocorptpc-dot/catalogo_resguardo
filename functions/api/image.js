@@ -7,7 +7,7 @@ export async function onRequest(context) {
     if (!id) return new Response('Missing id', { status: 400 });
     
     try {
-      const stmt = env.DB.prepare('SELECT content FROM chunks WHERE id = ?').bind(`img_${id}`);
+      const stmt = env.catalogo_resguardo.prepare('SELECT content FROM chunks WHERE id = ?').bind(`img_${id}`);
       const row = await stmt.first();
       if (row) {
         return new Response(JSON.stringify({ base64: row.content }), { headers: { 'Content-Type': 'application/json' } });
@@ -24,7 +24,7 @@ export async function onRequest(context) {
       const { id, base64 } = await request.json();
       const targetId = `img_${id}`;
       
-      const stmt = env.DB.prepare(`
+      const stmt = env.catalogo_resguardo.prepare(`
         INSERT INTO chunks (id, type, content) 
         VALUES (?, 'image', ?) 
         ON CONFLICT(id) DO UPDATE SET content=excluded.content, updated_at=CURRENT_TIMESTAMP
