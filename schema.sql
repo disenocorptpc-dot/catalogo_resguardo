@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS chunks (
+    id TEXT PRIMARY KEY,
+    type TEXT,
+    content TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

@@ -1,183 +1,63 @@
-
-import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, setDoc, addDoc, collection } from "firebase/firestore";
-import { getAuth, signInAnonymously } from "firebase/auth";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyBq4Y-zfQvksbFe36vb0pjagNu8poHvjyg",
-    authDomain: "speed-dashboard-8a1a9.firebaseapp.com",
-    projectId: "speed-dashboard-8a1a9",
-    storageBucket: "speed-dashboard-8a1a9.firebasestorage.app",
-    messagingSenderId: "650632424816",
-    appId: "1:650632424816:web:bd37e796996ad3db9273b5",
-    measurementId: "G-WDR0Z2EDHC"
-};
-
 class CloudDB {
     constructor() {
-        this.app = initializeApp(firebaseConfig);
-        this.db = getFirestore(this.app);
-        this.auth = getAuth(this.app);
-        this.docRef = null;
+        this.isCloudflare = true;
     }
 
     async init() {
-        try {
-            console.log("🔐 Authenticating (Strict Schema Mode)...");
-            await signInAnonymously(this.auth);
-            console.log("✅ Auth Success!");
-            await this.connectToDoc();
-        } catch (e) {
-            console.error("Auth Error", e);
-        }
+        console.log("🔐 Authenticating... (Cloudflare Mode)");
+        // D1 doesn't require client-side auth like Firebase, we connect via API endpoints.
+        console.log("✅ Conectado a Cloudflare D1");
         return this;
     }
 
-    async connectToDoc() {
-        // --- ENVIRONMENT CONFIG ---
-        const PROD_ID = 'jTOMaIV83XkU8v0nmurO';
-        const DEV_STORAGE_KEY = 'sculpture_dev_id_v1';
-
-        // Detect Environment: Real App (Vercel) vs Local Dev
-        const isProd = window.location.hostname.includes('vercel.app');
-
-        let targetId = null;
-
-        if (isProd) {
-            console.log("🏭 Running in PRODUCTION Mode");
-            targetId = PROD_ID;
-        } else {
-            console.log("🧪 Running in DEVELOPMENT Mode (Safe)");
-            targetId = localStorage.getItem(DEV_STORAGE_KEY);
-        }
-
-        console.log("📍 Connecting to ID:", targetId);
-
-        if (targetId) {
-            const ref = doc(this.db, "projects", targetId);
-            try {
-                const snap = await getDoc(ref);
-                if (snap.exists()) {
-                    this.docRef = ref;
-                    console.log("✅ RE-CONNECTED to Existing Cloud Doc:", targetId);
-
-                    // Visual Indicator for DEV Mode
-                    if (!isProd) {
-                        const banner = document.createElement('div');
-                        banner.innerText = "🛠️ MODO DESARROLLO (BD Prueba)";
-                        banner.style.position = 'fixed';
-                        banner.style.bottom = '10px';
-                        banner.style.right = '10px';
-                        banner.style.background = '#F59E0B';
-                        banner.style.color = '#000';
-                        banner.style.padding = '4px 8px';
-                        banner.style.borderRadius = '4px';
-                        banner.style.fontSize = '12px';
-                        banner.style.fontWeight = 'bold';
-                        banner.style.pointerEvents = 'none';
-                        document.body.appendChild(banner);
-                    }
-                    return;
-                } else {
-                    console.warn("⚠️ Saved ID not found in Cloud.");
-                }
-            } catch (e) {
-                console.warn("Reconnection check failed", e);
-            }
-        }
-
-        // If we are here, we need to create a new doc.
-        // BUT only allow creation if NOT in Prod (Prod normally relies on hardcoded ID).
-        // Actually, if PROD ID is missing/deleted, we have a bigger problem. 
-        // For Dev, we create new.
-
-        try {
-            console.log("✨ Creating NEW Cloud Doc (Dev/First Time)...");
-            const ref = await addDoc(collection(this.db, "projects"), {
-                name: isProd ? "SCULPTURE CATALOG DATA" : "DEV TEST DATA",
-                client: "SYSTEM",
-                deadline: "2030-01-01",
-                progress: 0,
-                order: 9999,
-                responsible: [],
-                phaseStarts: [],
-                phaseEnds: [],
-                logs: []
-            });
-
-            this.docRef = ref;
-            if (!isProd) {
-                localStorage.setItem(DEV_STORAGE_KEY, ref.id);
-            }
-            console.log("✅ Created & Saved NEW ID:", ref.id);
-        } catch (e) {
-            console.error("❌ strict-schema creation failed", e);
-            await this.tryUserCollection();
-        }
-    }
-
-    async tryUserCollection() {
-        // If projects is blocked, try 'users/{uid}'
-        try {
-            console.log("⚠️ Trying User Private Collection override...");
-            const uid = this.auth.currentUser.uid;
-            const ref = doc(collection(this.db, "users"), uid);
-            await setDoc(ref, { created: new Date() });
-            this.docRef = ref;
-            console.log("✅ Protected User Storage Active");
-        } catch (e) {
-            console.error("All storage attempts failed.", e);
-            alert("Error: Firebase rechazó todas las estrategias de guardado.");
-        }
-    }
-
     async saveState(key, data) {
-        if (!this.docRef) return;
-        // Parasitic Storage: Save data in 'chunks' subcollection 
-        // because main doc validation rules might block large JSON blobs
         try {
-            const dataRef = doc(this.db, "projects", this.docRef.id, "chunks", "data_" + key);
-            // 'chunks' schema usually requires 'content' and 'type' or similar
-            // We use 'content' to store stringified JSON
-            await setDoc(dataRef, {
-                content: JSON.stringify(data),
-                type: "json_data"
+            console.log(`💾 Guardando estado en D1: ${key}`);
+            await fetch('/api/state', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key, data })
             });
         } catch (e) { console.error("Save Error", e); }
     }
 
     async getState(key) {
-        if (!this.docRef) await this.init();
-        if (!this.docRef) return null;
-
         try {
-            const dataRef = doc(this.db, "projects", this.docRef.id, "chunks", "data_" + key);
-            const snap = await getDoc(dataRef);
-            if (snap.exists()) {
-                const raw = snap.data().content;
-                return JSON.parse(raw);
+            console.log(`🔍 Buscando estado en D1: ${key}`);
+            const res = await fetch(`/api/state?key=${key}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data) return data;
             }
-        } catch (e) { /* console.warn("No data found"); */ }
+        } catch (e) { console.error("Get Error", e); }
         return null;
     }
 
     async saveImage(id, blob) {
-        if (!this.docRef) return;
         try {
             const base64 = await this.blobToBase64(blob);
-            if (base64.length > 950000) return;
-            const imgDoc = doc(this.db, "projects", this.docRef.id, "chunks", "img_" + id);
-            await setDoc(imgDoc, { content: base64, type: "image" });
+            if (!base64 || base64.length > 1500000) {
+                console.warn("⚠️ Imagen muy grande o nula para D1.");
+                return;
+            }
+            console.log(`📸 Guardando imagen en D1: ${id}`);
+            await fetch('/api/image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, base64 })
+            });
         } catch (e) { console.error("Image Save Error", e); }
     }
 
     async getImage(id) {
-        if (!this.docRef) await this.init();
-        if (!this.docRef) return null;
         try {
-            const imgDoc = doc(this.db, "projects", this.docRef.id, "chunks", "img_" + id);
-            const snap = await getDoc(imgDoc);
-            if (snap.exists()) return await (await fetch(snap.data().content)).blob();
+            const res = await fetch(`/api/image?id=${id}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.base64) {
+                    return await (await fetch(data.base64)).blob();
+                }
+            }
         } catch (e) { }
         return null;
     }
@@ -223,3 +103,6 @@ class CloudDB {
 }
 
 window.db = new CloudDB();
+
+// Emit event for app.js if needed (like odp_maker does, though not required if app.js awaits init)
+window.dispatchEvent(new Event('dbLoaded'));

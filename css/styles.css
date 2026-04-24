@@ -523,6 +523,10 @@ select {
     width: 100%;
 }
 
+input[type="date"] {
+    color-scheme: dark;
+}
+
 input:focus,
 textarea:focus,
 select:focus {

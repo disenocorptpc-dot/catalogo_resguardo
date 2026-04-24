@@ -84,6 +84,79 @@ function renderInventory(container) {
     const table = document.createElement('table');
     table.className = 'inventory-table';
 
+    // --- DASHBOARD ALERTS SYSTEM ---
+    const today = new Date().toISOString().split('T')[0];
+    const alerts = [];
+
+    STATE.items.forEach(item => {
+        if (!item.dates) return;
+
+        // Check for upcoming deadlines (Next 7 days)
+        const checkDeadline = (dateStr, type) => {
+            if (!dateStr) return;
+            // Simple string compare works for ISO YYYY-MM-DD
+            // Is dateStr > today AND dateStr <= today + 7?
+            // Actually, let's use timestamps
+            const d = new Date(dateStr).getTime();
+            const t = new Date(today).getTime();
+            const diffDays = (d - t) / (1000 * 3600 * 24);
+
+            if (diffDays >= 0 && diffDays <= 5) {
+                alerts.push({
+                    id: item.id,
+                    name: item.name,
+                    days: Math.ceil(diffDays),
+                    type: type,
+                    date: dateStr
+                });
+            }
+        };
+
+        checkDeadline(item.dates.repair, 'Reparación');
+        checkDeadline(item.dates.propertyDue, 'Entrega a Propiedad');
+    });
+
+    if (alerts.length > 0) {
+        const alertBox = document.createElement('div');
+        alertBox.style.background = 'rgba(239, 68, 68, 0.15)';
+        alertBox.style.border = '1px solid #EF4444';
+        alertBox.style.borderRadius = '8px';
+        alertBox.style.padding = '16px';
+        alertBox.style.marginBottom = '24px';
+
+        let alertHtml = `
+            <h3 style="margin: 0 0 12px 0; color: #FCA5A5; display: flex; align-items: center; gap: 8px; font-size: 14px; text-transform: uppercase;">
+                <span class="material-symbols-rounded">notifications_active</span>
+                Atención Requerida (${alerts.length})
+            </h3>
+            <div style="display: grid; gap: 8px;">
+        `;
+
+        alerts.forEach(a => {
+            alertHtml += `
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 4px;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-weight: 600; color: white;">${a.name}</span>
+                        <span style="color: #FCA5A5; font-size: 12px;">Programada para: ${a.type}</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-weight: bold; color: white; background: #EF4444; padding: 2px 6px; border-radius: 4px; font-size: 11px;">
+                            ${a.days === 0 ? 'HOY' : (a.days === 1 ? 'MAÑANA' : `En ${a.days} días`)}
+                        </span>
+                         <button onclick="navigate('detail:${a.id}')" style="background:none; border:none; color:#ddd; cursor:pointer;" title="Ir a detalle">
+                            <span class="material-symbols-rounded">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        alertHtml += `</div>`;
+        alertBox.innerHTML = alertHtml;
+        container.appendChild(alertBox);
+    }
+    // --- END ALERTS ---
+
     const thead = `
         <thead>
             <tr>
@@ -289,38 +362,94 @@ async function renderDetail(container, id) {
 
             <form id="dates-form" style="display: grid; gap: 12px;">
                 <div>
-                    <label style="display: block; font-size: 11px; color: var(--text-tertiary); margin-bottom: 4px;">REPARACIÓN PROGRAMADA (Notificar a ITrujillo)</label>
+                <div>
+                    <label style="display: block; font-size: 11px; color: var(--text-tertiary); margin-bottom: 4px;">REPARACIÓN PROGRAMADA</label>
                     <div style="display: flex; gap: 8px;">
                         <input type="date" name="repair" value="${item.dates.repair || ''}">
-                        <a href="${mailLink}" class="action-btn btn-secondary" style="width: auto; padding: 0 10px;" title="Enviar Correo">
-                            <span class="material-symbols-rounded" style="font-size: 18px;">mail</span>
-                        </a>
+                        <button type="button" onclick="showNotificationOptions('${item.name}', '${item.warehouseId}', 'repair')" class="action-btn btn-secondary" style="width: auto; padding: 0 10px;" title="Notificar">
+                             <span class="material-symbols-rounded" style="font-size: 18px;">campaign</span>
+                        </button>
                     </div>
-                    <div style="font-size:10px; color:#555; margin-top:2px">* Al llegar fecha, pasa a Taller</div>
                 </div>
                 <div>
                     <label style="display: block; font-size: 11px; color: var(--text-tertiary); margin-bottom: 4px;">INGRESO A BODEGA</label>
-                    <input type="date" name="warehouseRet" value="${item.dates.warehouseRet || ''}">
-                     <div style="font-size:10px; color:#555; margin-top:2px">* Al llegar fecha, pasa a Bodega</div>
+                    <div style="display: flex; gap: 8px;">
+                         <input type="date" name="warehouseRet" value="${item.dates.warehouseRet || ''}">
+                         <button type="button" onclick="showNotificationOptions('${item.name}', '${item.warehouseId}', 'warehouse')" class="action-btn btn-secondary" style="width: auto; padding: 0 10px;" title="Notificar">
+                             <span class="material-symbols-rounded" style="font-size: 18px;">campaign</span>
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <label style="display: block; font-size: 11px; color: var(--text-tertiary); margin-bottom: 4px;">DEBE ESTAR EN PROPIEDAD</label>
-                    <input type="date" name="propertyDue" value="${item.dates.propertyDue || ''}">
-                     <div style="font-size:10px; color:#555; margin-top:2px">* Al llegar fecha, pasa a Propiedad</div>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="date" name="propertyDue" value="${item.dates.propertyDue || ''}">
+                        <button type="button" onclick="showNotificationOptions('${item.name}', '${item.warehouseId}', 'prop')" class="action-btn btn-secondary" style="width: auto; padding: 0 10px;" title="Notificar">
+                             <span class="material-symbols-rounded" style="font-size: 18px;">campaign</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; display:flex; justify-content:flex-end">
+                    <button type="button" id="save-dates-btn" class="action-btn btn-primary" style="width: auto;">
+                        <span class="material-symbols-rounded">save</span> Guardar Cambios
+                    </button>
                 </div>
             </form>
         </div>
     `;
 
-    // Trigger update on date change
-    left.querySelectorAll('input[type="date"]').forEach(input => {
-        input.addEventListener('change', async (e) => {
-            item.dates[e.target.name] = e.target.value;
-            updateItemLocation(item); // THE SMART LOGIC
-            await saveAll();
-            renderDetail(container, id); // Refresh UI
-        });
+    // Handle Manual Save
+    left.querySelector('#save-dates-btn').addEventListener('click', async () => {
+        const form = left.querySelector('#dates-form');
+        const fd = new FormData(form);
+
+        item.dates.repair = fd.get('repair');
+        item.dates.warehouseRet = fd.get('warehouseRet');
+        item.dates.propertyDue = fd.get('propertyDue');
+
+        updateItemLocation(item);
+        await saveAll();
+
+        // Show success visual instead of full re-render jump
+        const btn = left.querySelector('#save-dates-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span class="material-symbols-rounded">check</span> Guardado';
+        btn.style.background = 'var(--success)';
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.background = '';
+            renderRouter(); // Finally sync UI
+        }, 1000);
     });
+
+    // Notification Helper (Global scope or attached to window)
+    window.showNotificationOptions = (name, id, type) => {
+        const msg = `Atención: Gestión requerida para pieza ${name} (${id}). Favor de revisar fechas.`;
+
+        // Create a temporary modal
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; z-index:9999;';
+
+        modal.innerHTML = `
+            <div style="background:var(--bg-layer-1); padding:24px; border-radius:12px; width:300px; border:1px solid var(--bg-layer-2);">
+                <h3 style="margin-top:0; margin-bottom:16px; font-size:16px;">📢 Notificar a Responsable</h3>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <a href="mailto:?subject=Aviso Pieza ${name}&body=${encodeURIComponent(msg)}" target="_blank" class="action-btn btn-secondary" style="text-decoration:none">
+                        <span class="material-symbols-rounded">mail</span> Email
+                    </a>
+                    <a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" class="action-btn btn-secondary" style="text-decoration:none; color:#25D366; border-color: currentColor; background: rgba(37, 211, 102, 0.1);">
+                        <span class="material-symbols-rounded">chat</span> WhatsApp
+                    </a>
+                    <a href="https://teams.microsoft.com/l/chat/0/0?users=&message=${encodeURIComponent(msg)}" target="_blank" class="action-btn btn-secondary" style="text-decoration:none; color:#6264A7; border-color: currentColor; background: rgba(98, 100, 167, 0.1);">
+                        <span class="material-symbols-rounded">group</span> Teams
+                    </a>
+                </div>
+                <button onclick="this.parentElement.parentElement.remove()" style="margin-top:16px; width:100%; padding:8px; background:transparent; border:none; color:var(--text-tertiary); cursor:pointer;">Cancelar</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    };
 
     // RIGHT COL: Comments / Bitácora
     const right = document.createElement('div');
