@@ -717,7 +717,7 @@ window.updateBasicData = async (id, field, value) => {
             item.history.push({
                 type: 'note',
                 person: 'Sistema',
-                text: \`Se actualizó el \${fieldName} de "\${oldVal}" a "\${item[field]}"\`,
+                text: `Se actualizó el ${fieldName} de "${oldVal}" a "${item[field]}"`,
                 date: new Date().toISOString()
             });
         }
