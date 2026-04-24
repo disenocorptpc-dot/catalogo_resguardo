@@ -712,12 +712,28 @@ window.printFicha = (id, name, warehouseId, imgUrl) => {
     
     ficha.innerHTML = `
         <div class="ficha-container">
-            <div class="ficha-header">Catálogo Resguardo 3D</div>
-            <img src="${imgUrl}" class="ficha-img">
-            <div class="ficha-name">${name}</div>
-            <div class="ficha-id">ID: ${warehouseId}</div>
-            <div id="ficha-qr-code" class="ficha-qr"></div>
-            <div class="ficha-footer">Escanear para ver detalles e historial en el sistema</div>
+            <div class="ficha-header">Catálogo Resguardo 3D &bull; Bodega Central</div>
+            
+            <div class="ficha-body">
+                <div class="ficha-img-wrapper">
+                    <img src="${imgUrl}" class="ficha-img">
+                </div>
+                
+                <div class="ficha-details">
+                    <div class="ficha-name-label">Nombre de la Pieza</div>
+                    <div class="ficha-name">${name}</div>
+                    
+                    <div class="ficha-id-label">ID de Inventario</div>
+                    <div class="ficha-id">${warehouseId}</div>
+                    
+                    <div id="ficha-qr-code" class="ficha-qr"></div>
+                </div>
+            </div>
+            
+            <div class="ficha-footer">
+                <span>Escanear QR para ver bitácora y traslados</span>
+                <span style="color: #666;">ID Sistema: ${id}</span>
+            </div>
         </div>
     `;
     
