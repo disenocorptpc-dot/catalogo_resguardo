@@ -340,7 +340,13 @@ async function renderDetail(container, id) {
     left.className = 'detail-sidebar';
     left.innerHTML = `
         <div>
-            <img src="${imgUrl}" class="big-image">
+            <div style="position: relative; display: inline-block; width: 100%; cursor: pointer;" onclick="document.getElementById('edit-img-input').click()" title="Clic para cambiar foto" class="editable-img-container">
+                <img src="${imgUrl}" class="big-image" style="display: block;">
+                <div class="edit-img-overlay">
+                    <span class="material-symbols-rounded">add_a_photo</span>
+                </div>
+            </div>
+            <input type="file" id="edit-img-input" accept="image/*" style="display: none" onchange="replaceImage('${item.id}', this)">
             <input type="text" class="editable-title" value="${item.name}" onchange="updateBasicData('${item.id}', 'name', this.value)" title="Clic para editar el nombre">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <input type="text" class="editable-subtitle" value="${item.warehouseId}" onchange="updateBasicData('${item.id}', 'warehouseId', this.value)" title="Clic para editar el ID">
@@ -729,6 +735,31 @@ window.updateBasicData = async (id, field, value) => {
         const container = document.getElementById('content-area');
         renderDetail(container, id);
     }
+};
+
+window.replaceImage = async (id, fileInput) => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    
+    const item = STATE.items.find(i => i.id === id);
+    if (!item) return;
+
+    if (!item.imageId) {
+        item.imageId = id + '_img';
+    }
+    
+    await db.saveImage(item.imageId, file);
+    
+    item.history.push({
+        type: 'note',
+        person: 'Sistema',
+        text: 'Se actualizó la fotografía de la pieza.',
+        date: new Date().toISOString()
+    });
+    
+    await saveAll();
+    const container = document.getElementById('content-area');
+    renderDetail(container, id);
 };
 
 window.printFicha = (id, name, warehouseId, imgUrl) => {
