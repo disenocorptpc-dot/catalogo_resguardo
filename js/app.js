@@ -562,7 +562,7 @@ function renderNewForm(container) {
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div>
                         <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 500; color: var(--text-secondary);">ID DE BODEGA</label>
-                        <input type="text" name="warehouseId" placeholder="Ej. A-104" required>
+                        <input type="text" name="warehouseId" placeholder="Ej. A-104 (Opcional)">
                     </div>
                     <div>
                         <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 500; color: var(--text-secondary);">NOMBRE</label>
@@ -610,7 +610,7 @@ function renderNewForm(container) {
 
         const newItem = {
             id: newId,
-            warehouseId: formData.get('warehouseId'),
+            warehouseId: formData.get('warehouseId').trim() || 'Sin ID',
             name: formData.get('name'),
             imageId: imageId,
             location: 'bodega', // DEFAULT
@@ -707,23 +707,25 @@ window.deleteItem = async (id, e) => {
 
 window.updateBasicData = async (id, field, value) => {
     const item = STATE.items.find(i => i.id === id);
-    if (item && value.trim() !== '') {
-        const oldVal = item[field];
-        item[field] = value.trim();
+    if (item) {
+        let cleanValue = value.trim();
         
-        // Registrar en bitácora el cambio de nombre o ID
-        if (oldVal !== item[field]) {
+        if (field === 'name' && cleanValue === '') return;
+        if (field === 'warehouseId' && cleanValue === '') cleanValue = 'Sin ID';
+        
+        const oldVal = item[field];
+        if (oldVal !== cleanValue) {
+            item[field] = cleanValue;
             const fieldName = field === 'name' ? 'Nombre' : 'ID de Bodega';
             item.history.push({
                 type: 'note',
                 person: 'Sistema',
-                text: `Se actualizó el ${fieldName} de "${oldVal}" a "${item[field]}"`,
+                text: `Se actualizó el ${fieldName} de "${oldVal}" a "${cleanValue}"`,
                 date: new Date().toISOString()
             });
+            await saveAll();
         }
-        
-        await saveAll();
-        // Refrescar la vista actual para que la bitácora se actualice y los botones impriman lo nuevo
+        // Refrescar para aplicar el valor real (o revertir si era inválido)
         const container = document.getElementById('content-area');
         renderDetail(container, id);
     }
