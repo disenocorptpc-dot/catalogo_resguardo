@@ -528,9 +528,45 @@ input[type="date"] {
 }
 
 input:focus,
+input:focus,
 textarea:focus,
 select:focus {
     border-color: var(--primary);
+}
+
+/* Inline Editable Fields */
+.editable-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    background: transparent;
+    border: 1px dashed transparent;
+    width: 100%;
+    margin: 0 0 4px 0;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+.editable-title:hover, .editable-title:focus {
+    border-color: var(--primary);
+    background: rgba(255,255,255,0.05);
+}
+
+.editable-subtitle {
+    color: var(--primary);
+    font-family: monospace;
+    font-size: 14px;
+    background: transparent;
+    border: 1px dashed transparent;
+    width: 150px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+.editable-subtitle:hover, .editable-subtitle:focus {
+    border-color: var(--primary);
+    background: rgba(255,255,255,0.05);
 }
 
 /* --- PRINT STYLES (Ficha PDF) --- */

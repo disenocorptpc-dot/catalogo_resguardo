@@ -341,9 +341,9 @@ async function renderDetail(container, id) {
     left.innerHTML = `
         <div>
             <img src="${imgUrl}" class="big-image">
-            <h2 style="margin: 0 0 4px 0;">${item.name}</h2>
+            <input type="text" class="editable-title" value="${item.name}" onchange="updateBasicData('${item.id}', 'name', this.value)" title="Clic para editar el nombre">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="color: var(--primary); font-family: monospace;">${item.warehouseId}</div>
+                <input type="text" class="editable-subtitle" value="${item.warehouseId}" onchange="updateBasicData('${item.id}', 'warehouseId', this.value)" title="Clic para editar el ID">
                 <button onclick="window.printFicha('${item.id}', '${item.name}', '${item.warehouseId}', '${imgUrl}')" class="action-btn btn-secondary" style="width: auto; padding: 4px 12px; font-size: 12px; height: 32px;" title="Imprimir Ficha PDF">
                     <span class="material-symbols-rounded" style="font-size: 16px;">print</span> Imprimir
                 </button>
@@ -703,6 +703,30 @@ window.deleteItem = async (id, e) => {
     STATE.items = STATE.items.filter(i => i.id !== id);
     await saveAll();
     renderInventory(document.getElementById('content-area'));
+};
+
+window.updateBasicData = async (id, field, value) => {
+    const item = STATE.items.find(i => i.id === id);
+    if (item && value.trim() !== '') {
+        const oldVal = item[field];
+        item[field] = value.trim();
+        
+        // Registrar en bitácora el cambio de nombre o ID
+        if (oldVal !== item[field]) {
+            const fieldName = field === 'name' ? 'Nombre' : 'ID de Bodega';
+            item.history.push({
+                type: 'note',
+                person: 'Sistema',
+                text: \`Se actualizó el \${fieldName} de "\${oldVal}" a "\${item[field]}"\`,
+                date: new Date().toISOString()
+            });
+        }
+        
+        await saveAll();
+        // Refrescar la vista actual para que la bitácora se actualice y los botones impriman lo nuevo
+        const container = document.getElementById('content-area');
+        renderDetail(container, id);
+    }
 };
 
 window.printFicha = (id, name, warehouseId, imgUrl) => {
