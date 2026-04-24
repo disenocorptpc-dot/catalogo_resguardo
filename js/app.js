@@ -192,11 +192,11 @@ function renderInventory(container) {
         const lastMove = item.history[item.history.length - 1];
 
         // Migration safeguard
-        if (!item.location) item.location = item.status === 'out' ? 'propiedad' : 'bodega';
+        if (!item.location) item.location = item.status === 'out' ? 'propiedad' : 'solulogics';
 
         // Status Badge Logic
         let badgeClass = 'stock'; // default green
-        let badgeText = 'EN BODEGA';
+        let badgeText = 'EN solulogics';
 
         if (item.location === 'taller') {
             badgeClass = 'out'; // reusing out (orange)
@@ -286,11 +286,11 @@ async function renderDetail(container, id) {
 
     // Helper for Location Display (Updated)
     const locMap = {
-        'bodega': { color: 'var(--success)', label: 'EN BODEGA', dot: '#10B981' },
+        'solulogics': { color: 'var(--success)', label: 'EN solulogics', dot: '#10B981' },
         'taller': { color: 'var(--warning)', label: 'EN TALLER', dot: '#F59E0B' },
         'propiedad': { color: '#818cf8', label: 'EN PROPIEDAD', dot: '#6366f1' }
     };
-    const currentLoc = locMap[item.location] || locMap['bodega'];
+    const currentLoc = locMap[item.location] || locMap['solulogics'];
 
     // Mailto Link
     const mailSubject = `Recordatorio Reparación: ${item.name} (${item.warehouseId})`;
@@ -317,7 +317,7 @@ async function renderDetail(container, id) {
                     </div>` : ''}
                 ${item.dates.warehouseRet ? `
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
-                        <span style="color: var(--text-secondary);">Ingreso Bodega:</span>
+                        <span style="color: var(--text-secondary);">Ingreso solulogics:</span>
                         <div style="display:flex; gap:6px; align-items:center">
                             <span style="font-weight: 600; color: var(--text-primary);">${displayDate(item.dates.warehouseRet)}</span>
                             <a href="${getGCalLink('Ingreso: ' + item.name, item.dates.warehouseRet)}" target="_blank" title="Agregar a Calendario" style="text-decoration:none; color:var(--text-tertiary)"><span class="material-symbols-rounded" style="font-size:16px">calendar_today</span></a>
@@ -340,7 +340,7 @@ async function renderDetail(container, id) {
     left.className = 'detail-sidebar';
     left.innerHTML = `
         <div>
-            <div style="position: relative; display: inline-block; width: 100%; cursor: pointer;" onclick="document.getElementById('edit-img-input').click()" title="Clic para cambiar foto" class="editable-img-container">
+            <div style="position: relative; display: inline-block; width: 100%; cursor: pointer;" onclick="if(checkAuth()) document.getElementById('edit-img-input').click()" title="Clic para cambiar foto" class="editable-img-container">
                 <img src="${imgUrl}" class="big-image" style="display: block;">
                 <div class="edit-img-overlay">
                     <span class="material-symbols-rounded">add_a_photo</span>
@@ -375,7 +375,7 @@ async function renderDetail(container, id) {
             
             <div style="font-size: 11px; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 8px; border-radius: 4px; margin-bottom: 12px; line-height: 1.4; display:flex; gap:6px; align-items:flex-start">
                 <span class="material-symbols-rounded" style="font-size: 14px; margin-top:1px">warning</span>
-                <span>Solicitar con 2 semanas de anticipación a bodega</span>
+                <span>Solicitar con 2 semanas de anticipación a solulogics</span>
             </div>
 
             <form id="dates-form" style="display: grid; gap: 12px;">
@@ -390,7 +390,7 @@ async function renderDetail(container, id) {
                     </div>
                 </div>
                 <div>
-                    <label style="display: block; font-size: 11px; color: var(--text-tertiary); margin-bottom: 4px;">INGRESO A BODEGA</label>
+                    <label style="display: block; font-size: 11px; color: var(--text-tertiary); margin-bottom: 4px;">INGRESO A solulogics</label>
                     <div style="display: flex; gap: 8px;">
                          <input type="date" name="warehouseRet" value="${item.dates.warehouseRet || ''}">
                          <button type="button" onclick="showNotificationOptions('${item.name}', '${item.warehouseId}', 'warehouse')" class="action-btn btn-secondary" style="width: auto; padding: 0 10px;" title="Notificar">
@@ -419,6 +419,7 @@ async function renderDetail(container, id) {
 
     // Handle Manual Save
     left.querySelector('#save-dates-btn').addEventListener('click', async () => {
+        if (!checkAuth()) return;
         const form = left.querySelector('#dates-form');
         const fd = new FormData(form);
 
@@ -567,7 +568,7 @@ function renderNewForm(container) {
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div>
-                        <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 500; color: var(--text-secondary);">ID DE BODEGA</label>
+                        <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 500; color: var(--text-secondary);">ID DE solulogics</label>
                         <input type="text" name="warehouseId" placeholder="Ej. A-104 (Opcional)">
                     </div>
                     <div>
@@ -577,7 +578,7 @@ function renderNewForm(container) {
                 </div>
 
                 <div style="color: var(--text-tertiary); font-size: 11px;">
-                    * Al registrarse, la pieza tendrá el estado inicial "EN BODEGA".
+                    * Al registrarse, la pieza tendrá el estado inicial "EN solulogics".
                 </div>
 
                 <button type="submit" class="action-btn btn-primary" style="padding: 14px;">GUARDAR PIEZA</button>
@@ -603,6 +604,7 @@ function renderNewForm(container) {
     // Handle Submit
     document.getElementById('create-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (!checkAuth()) return;
         const formData = new FormData(e.target);
 
         const newId = 'SC-' + Date.now();
@@ -619,7 +621,7 @@ function renderNewForm(container) {
             warehouseId: formData.get('warehouseId').trim() || 'Sin ID',
             name: formData.get('name'),
             imageId: imageId,
-            location: 'bodega', // DEFAULT
+            location: 'solulogics', // DEFAULT
             dates: { repair: '', workshopReq: '', warehouseRet: '', propertyDue: '' },
             history: [{
                 type: 'new',
@@ -678,21 +680,26 @@ function updateItemLocation(item) {
     const today = new Date().toISOString().split('T')[0];
     const { repair, warehouseRet, propertyDue } = item.dates;
 
-    // Smart Logic:
-    // 1. Default -> Bodega
-    // 2. If Today >= Repair Date -> Taller
-    // 3. If Today >= Warehouse Entry -> Bodega (Back from Taller)
-    // 4. If Today >= Property Due -> Propiedad
-
-    // This sequence allows the phases to override each other chronologically
-    let newLoc = 'bodega';
+    // Default to Taller if no dates or not reached any date
+    let newLoc = 'taller';
 
     if (repair && today >= repair) newLoc = 'taller';
-    if (warehouseRet && today >= warehouseRet) newLoc = 'bodega';
+    if (warehouseRet && today >= warehouseRet) newLoc = 'solulogics';
     if (propertyDue && today >= propertyDue) newLoc = 'propiedad';
 
     item.location = newLoc;
 }
+
+window.checkAuth = () => {
+    if (sessionStorage.getItem('admin_auth') === 'Palace2026**') return true;
+    const pwd = prompt("Acceso Restringido: Ingresa la contraseña de administrador para realizar cambios:");
+    if (pwd === 'Palace2026**') {
+        sessionStorage.setItem('admin_auth', pwd);
+        return true;
+    }
+    if (pwd !== null) alert("Contraseña incorrecta.");
+    return false;
+};
 
 function getGCalLink(title, dateStr) {
     if (!dateStr) return '#';
@@ -705,6 +712,7 @@ function getGCalLink(title, dateStr) {
 
 window.deleteItem = async (id, e) => {
     e.stopPropagation();
+    if (!checkAuth()) return;
     if (!confirm('¿Estás seguro de ELIMINAR esta pieza permanentemente?')) return;
     STATE.items = STATE.items.filter(i => i.id !== id);
     await saveAll();
@@ -712,6 +720,10 @@ window.deleteItem = async (id, e) => {
 };
 
 window.updateBasicData = async (id, field, value) => {
+    if (!checkAuth()) {
+        renderDetail(document.getElementById('content-area'), id);
+        return;
+    }
     const item = STATE.items.find(i => i.id === id);
     if (item) {
         let cleanValue = value.trim();
@@ -722,7 +734,7 @@ window.updateBasicData = async (id, field, value) => {
         const oldVal = item[field];
         if (oldVal !== cleanValue) {
             item[field] = cleanValue;
-            const fieldName = field === 'name' ? 'Nombre' : 'ID de Bodega';
+            const fieldName = field === 'name' ? 'Nombre' : 'ID de solulogics';
             item.history.push({
                 type: 'note',
                 person: 'Sistema',
@@ -769,7 +781,7 @@ window.printFicha = (id, name, warehouseId, imgUrl) => {
     
     ficha.innerHTML = `
         <div class="ficha-container">
-            <div class="ficha-header">Catálogo Resguardo 3D &bull; Bodega Central</div>
+            <div class="ficha-header">Catálogo Resguardo 3D &bull; solulogics Central</div>
             
             <div class="ficha-body">
                 <div class="ficha-img-wrapper">
