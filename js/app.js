@@ -31,6 +31,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         STATE.items = INITIAL_DATA;
     }
 
+    // Parse URL params for direct linking (for QR codes)
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewParam = urlParams.get('view');
+    if (viewParam) {
+        STATE.view = viewParam;
+    }
+
     // 3. Render
     renderRouter();
 
@@ -335,7 +342,12 @@ async function renderDetail(container, id) {
         <div>
             <img src="${imgUrl}" class="big-image">
             <h2 style="margin: 0 0 4px 0;">${item.name}</h2>
-            <div style="color: var(--primary); font-family: monospace;">${item.warehouseId}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="color: var(--primary); font-family: monospace;">${item.warehouseId}</div>
+                <button onclick="window.printFicha('${item.id}', '${item.name}', '${item.warehouseId}', '${imgUrl}')" class="action-btn btn-secondary" style="width: auto; padding: 4px 12px; font-size: 12px; height: 32px;" title="Imprimir Ficha PDF">
+                    <span class="material-symbols-rounded" style="font-size: 16px;">print</span> Imprimir
+                </button>
+            </div>
         </div>
 
         <div style="background: var(--bg-layer-2); padding: 12px; border-radius: 6px;">
@@ -691,4 +703,34 @@ window.deleteItem = async (id, e) => {
     STATE.items = STATE.items.filter(i => i.id !== id);
     await saveAll();
     renderInventory(document.getElementById('content-area'));
+};
+
+window.printFicha = (id, name, warehouseId, imgUrl) => {
+    const ficha = document.getElementById('print-ficha');
+    const baseUrl = window.location.origin + window.location.pathname;
+    const qrUrl = baseUrl + '?view=detail:' + id; 
+    
+    ficha.innerHTML = `
+        <div class="ficha-container">
+            <div class="ficha-header">Catálogo Resguardo 3D</div>
+            <img src="${imgUrl}" class="ficha-img">
+            <div class="ficha-name">${name}</div>
+            <div class="ficha-id">ID: ${warehouseId}</div>
+            <div id="ficha-qr-code" class="ficha-qr"></div>
+            <div class="ficha-footer">Escanear para ver detalles e historial en el sistema</div>
+        </div>
+    `;
+    
+    new QRCode(document.getElementById('ficha-qr-code'), {
+        text: qrUrl,
+        width: 150,
+        height: 150,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+    });
+    
+    setTimeout(() => {
+        window.print();
+    }, 500);
 };
