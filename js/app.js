@@ -704,9 +704,10 @@ function updateItemLocation(item) {
 }
 
 window.checkAuth = () => {
-    if (sessionStorage.getItem('admin_auth') === 'Palace2026**') return true;
+    const validPasswords = ['Palace2026**', 'Ibsanesgay2026'];
+    if (validPasswords.includes(sessionStorage.getItem('admin_auth'))) return true;
     const pwd = prompt("Acceso Restringido: Ingresa la contraseña de administrador para realizar cambios:");
-    if (pwd === 'Palace2026**') {
+    if (validPasswords.includes(pwd)) {
         sessionStorage.setItem('admin_auth', pwd);
         return true;
     }
