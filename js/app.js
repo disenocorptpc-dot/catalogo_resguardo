@@ -26,7 +26,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 2. Load Data
     const saved = await db.getState('app_data');
     if (saved) {
+        // --- MIGRATION: solulogics -> SOLULOGIS ---
+        let migrated = false;
+        saved.forEach(item => {
+            if (item.location === 'solulogics') {
+                item.location = 'SOLULOGIS';
+                migrated = true;
+            }
+        });
         STATE.items = saved;
+        
+        if (migrated) {
+            console.log("Migrando datos heredados 'solulogics' a 'SOLULOGIS'...");
+            await db.saveState('app_data', STATE.items);
+        }
     } else {
         STATE.items = INITIAL_DATA;
     }
@@ -192,11 +205,11 @@ function renderInventory(container) {
         const lastMove = item.history[item.history.length - 1];
 
         // Migration safeguard
-        if (!item.location) item.location = item.status === 'out' ? 'propiedad' : 'solulogics';
+        if (!item.location) item.location = item.status === 'out' ? 'propiedad' : 'SOLULOGIS';
 
         // Status Badge Logic
         let badgeClass = 'stock'; // default green
-        let badgeText = 'EN solulogics';
+        let badgeText = 'EN SOLULOGIS';
 
         if (item.location === 'taller') {
             badgeClass = 'out'; // reusing out (orange)
@@ -286,11 +299,11 @@ async function renderDetail(container, id) {
 
     // Helper for Location Display (Updated)
     const locMap = {
-        'solulogics': { color: 'var(--success)', label: 'EN solulogics', dot: '#10B981' },
+        'SOLULOGIS': { color: 'var(--success)', label: 'EN SOLULOGIS', dot: '#10B981' },
         'taller': { color: 'var(--warning)', label: 'EN TALLER', dot: '#F59E0B' },
         'propiedad': { color: '#818cf8', label: 'EN PROPIEDAD', dot: '#6366f1' }
     };
-    const currentLoc = locMap[item.location] || locMap['solulogics'];
+    const currentLoc = locMap[item.location] || locMap['SOLULOGIS'];
 
     // Mailto Link
     const mailSubject = `Recordatorio Reparación: ${item.name} (${item.warehouseId})`;
@@ -317,7 +330,7 @@ async function renderDetail(container, id) {
                     </div>` : ''}
                 ${item.dates.warehouseRet ? `
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
-                        <span style="color: var(--text-secondary);">Ingreso solulogics:</span>
+                        <span style="color: var(--text-secondary);">Ingreso SOLULOGIS:</span>
                         <div style="display:flex; gap:6px; align-items:center">
                             <span style="font-weight: 600; color: var(--text-primary);">${displayDate(item.dates.warehouseRet)}</span>
                             <a href="${getGCalLink('Ingreso: ' + item.name, item.dates.warehouseRet)}" target="_blank" title="Agregar a Calendario" style="text-decoration:none; color:var(--text-tertiary)"><span class="material-symbols-rounded" style="font-size:16px">calendar_today</span></a>
@@ -375,7 +388,7 @@ async function renderDetail(container, id) {
             
             <div style="font-size: 11px; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 8px; border-radius: 4px; margin-bottom: 12px; line-height: 1.4; display:flex; gap:6px; align-items:flex-start">
                 <span class="material-symbols-rounded" style="font-size: 14px; margin-top:1px">warning</span>
-                <span>Solicitar con 2 semanas de anticipación a solulogics</span>
+                <span>Solicitar con 2 semanas de anticipación a SOLULOGIS</span>
             </div>
 
             <form id="dates-form" style="display: grid; gap: 12px;">
@@ -390,7 +403,7 @@ async function renderDetail(container, id) {
                     </div>
                 </div>
                 <div>
-                    <label style="display: block; font-size: 11px; color: var(--text-tertiary); margin-bottom: 4px;">INGRESO A solulogics</label>
+                    <label style="display: block; font-size: 11px; color: var(--text-tertiary); margin-bottom: 4px;">INGRESO A SOLULOGIS</label>
                     <div style="display: flex; gap: 8px;">
                          <input type="date" name="warehouseRet" value="${item.dates.warehouseRet || ''}">
                          <button type="button" onclick="showNotificationOptions('${item.name}', '${item.warehouseId}', 'warehouse')" class="action-btn btn-secondary" style="width: auto; padding: 0 10px;" title="Notificar">
@@ -568,7 +581,7 @@ function renderNewForm(container) {
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div>
-                        <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 500; color: var(--text-secondary);">ID DE solulogics</label>
+                        <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 500; color: var(--text-secondary);">ID DE SOLULOGIS</label>
                         <input type="text" name="warehouseId" placeholder="Ej. A-104 (Opcional)">
                     </div>
                     <div>
@@ -578,7 +591,7 @@ function renderNewForm(container) {
                 </div>
 
                 <div style="color: var(--text-tertiary); font-size: 11px;">
-                    * Al registrarse, la pieza tendrá el estado inicial "EN solulogics".
+                    * Al registrarse, la pieza tendrá el estado inicial "EN SOLULOGIS".
                 </div>
 
                 <button type="submit" class="action-btn btn-primary" style="padding: 14px;">GUARDAR PIEZA</button>
@@ -621,7 +634,7 @@ function renderNewForm(container) {
             warehouseId: formData.get('warehouseId').trim() || 'Sin ID',
             name: formData.get('name'),
             imageId: imageId,
-            location: 'solulogics', // DEFAULT
+            location: 'SOLULOGIS', // DEFAULT
             dates: { repair: '', workshopReq: '', warehouseRet: '', propertyDue: '' },
             history: [{
                 type: 'new',
@@ -684,7 +697,7 @@ function updateItemLocation(item) {
     let newLoc = 'taller';
 
     if (repair && today >= repair) newLoc = 'taller';
-    if (warehouseRet && today >= warehouseRet) newLoc = 'solulogics';
+    if (warehouseRet && today >= warehouseRet) newLoc = 'SOLULOGIS';
     if (propertyDue && today >= propertyDue) newLoc = 'propiedad';
 
     item.location = newLoc;
@@ -734,7 +747,7 @@ window.updateBasicData = async (id, field, value) => {
         const oldVal = item[field];
         if (oldVal !== cleanValue) {
             item[field] = cleanValue;
-            const fieldName = field === 'name' ? 'Nombre' : 'ID de solulogics';
+            const fieldName = field === 'name' ? 'Nombre' : 'ID de SOLULOGIS';
             item.history.push({
                 type: 'note',
                 person: 'Sistema',
@@ -781,7 +794,7 @@ window.printFicha = (id, name, warehouseId, imgUrl) => {
     
     ficha.innerHTML = `
         <div class="ficha-container">
-            <div class="ficha-header">Catálogo Resguardo 3D &bull; solulogics Central</div>
+            <div class="ficha-header">Catálogo Resguardo 3D &bull; SOLULOGIS Central</div>
             
             <div class="ficha-body">
                 <div class="ficha-img-wrapper">
