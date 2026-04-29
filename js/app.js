@@ -586,57 +586,6 @@ async function renderDetail(container, id) {
     });
     historyHtml += '</div>';
 
-    // Status Report Gallery (Last Batch)
-    let statusGalleryHtml = '';
-    if (item.statusImages && item.statusImages.length > 0) {
-        statusGalleryHtml = `
-            <div style="margin-bottom: 24px; background: rgba(0,0,0,0.1); padding: 12px; border-radius: 8px; border: 1px dashed var(--bg-layer-3);">
-                <h4 style="margin: 0 0 12px 0; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); display:flex; align-items:center; gap:6px;">
-                    <span class="material-symbols-rounded" style="font-size:16px;">photo_library</span> 
-                    Último Reporte de Estado
-                </h4>
-                <div id="status-gallery-${item.id}" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;">
-                    <span style="color:var(--text-tertiary); font-size:12px;">Cargando imágenes...</span>
-                </div>
-            </div>
-        `;
-        
-        setTimeout(async () => {
-            const gallery = document.getElementById(`status-gallery-${item.id}`);
-            if(!gallery) return;
-            gallery.innerHTML = '';
-            for(let imgId of item.statusImages) {
-                const blob = await db.getImage(imgId);
-                if(blob) {
-                    const url = URL.createObjectURL(blob);
-                    gallery.innerHTML += `<img src="${url}" style="height: 100px; border-radius: 4px; object-fit: cover; border: 1px solid var(--bg-layer-3); cursor: pointer;" onclick="window.open('${url}')" title="Click para ampliar">`;
-                }
-            }
-        }, 100);
-    }
-
-    // Status Report Upload Form
-    const uploadStatusHtml = `
-        <div style="background: var(--bg-layer-2); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
-                <h4 style="margin: 0;">Reporte Gráfico</h4>
-                <button onclick="document.getElementById('status-imgs-input').click()" class="action-btn btn-secondary" style="width:auto; padding: 4px 8px; font-size: 12px;" title="Sube varias fotos del estado actual. Sobrescribirá el reporte anterior.">
-                    <span class="material-symbols-rounded" style="font-size: 16px;">add_photo_alternate</span> Seleccionar Fotos
-                </button>
-                <input type="file" id="status-imgs-input" accept="image/*" multiple style="display: none" onchange="window.previewStatusImages(this)">
-            </div>
-            
-            <form id="status-report-form" style="display: none; gap: 12px; flex-direction: column;">
-                <div id="status-imgs-preview" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;"></div>
-                <input type="text" name="author" placeholder="Tu Nombre / Responsable" required style="width: 100%;">
-                <div style="display:flex; justify-content: flex-end; gap: 8px;">
-                    <button type="button" onclick="window.cancelStatusReport()" class="action-btn" style="width: auto; background:transparent;">Cancelar</button>
-                    <button type="submit" id="btn-submit-status" class="action-btn btn-primary" style="width: auto;">Actualizar Reporte</button>
-                </div>
-            </form>
-        </div>
-    `;
-
     right.innerHTML = `
         ${statusGalleryHtml}
         ${uploadStatusHtml}
