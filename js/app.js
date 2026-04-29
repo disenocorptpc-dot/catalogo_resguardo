@@ -508,7 +508,7 @@ async function renderDetail(container, id) {
             <div style="margin-bottom: 24px; background: rgba(0,0,0,0.1); padding: 12px; border-radius: 8px; border: 1px dashed var(--bg-layer-3);">
                 <h4 style="margin: 0 0 12px 0; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); display:flex; align-items:center; gap:6px;">
                     <span class="material-symbols-rounded" style="font-size:16px;">photo_library</span> 
-                    Último Reporte de Estado
+                    Último Reporte Fotográfico
                 </h4>
                 <div id="status-gallery-${item.id}" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;">
                     <span style="color:var(--text-tertiary); font-size:12px;">Cargando imágenes...</span>
@@ -534,7 +534,7 @@ async function renderDetail(container, id) {
     const uploadStatusHtml = `
         <div style="background: var(--bg-layer-2); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
-                <h4 style="margin: 0;">Reporte Gráfico</h4>
+                <h4 style="margin: 0;">Reporte Fotográfico</h4>
                 <button onclick="document.getElementById('status-imgs-input').click()" class="action-btn btn-secondary" style="width:auto; padding: 4px 8px; font-size: 12px;" title="Sube varias fotos del estado actual. Sobrescribirá el reporte anterior.">
                     <span class="material-symbols-rounded" style="font-size: 16px;">add_photo_alternate</span> Seleccionar Fotos
                 </button>
@@ -647,7 +647,7 @@ async function renderDetail(container, id) {
             item.history.push({
                 type: 'note',
                 person: author,
-                text: `Se actualizó el reporte gráfico de estado con ${files.length} foto(s).`,
+                text: `Se actualizó el reporte fotográfico de estado con ${files.length} foto(s).`,
                 date: new Date().toISOString()
             });
 
