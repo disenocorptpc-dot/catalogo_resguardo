@@ -501,6 +501,57 @@ async function renderDetail(container, id) {
         </div>
     `;
 
+    // Status Report Gallery (Last Batch)
+    let statusGalleryHtml = '';
+    if (item.statusImages && item.statusImages.length > 0) {
+        statusGalleryHtml = `
+            <div style="margin-bottom: 24px; background: rgba(0,0,0,0.1); padding: 12px; border-radius: 8px; border: 1px dashed var(--bg-layer-3);">
+                <h4 style="margin: 0 0 12px 0; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); display:flex; align-items:center; gap:6px;">
+                    <span class="material-symbols-rounded" style="font-size:16px;">photo_library</span> 
+                    Último Reporte de Estado
+                </h4>
+                <div id="status-gallery-${item.id}" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;">
+                    <span style="color:var(--text-tertiary); font-size:12px;">Cargando imágenes...</span>
+                </div>
+            </div>
+        `;
+        
+        setTimeout(async () => {
+            const gallery = document.getElementById(`status-gallery-${item.id}`);
+            if(!gallery) return;
+            gallery.innerHTML = '';
+            for(let imgId of item.statusImages) {
+                const blob = await db.getImage(imgId);
+                if(blob) {
+                    const url = URL.createObjectURL(blob);
+                    gallery.innerHTML += `<img src="${url}" style="height: 100px; border-radius: 4px; object-fit: cover; border: 1px solid var(--bg-layer-3); cursor: pointer;" onclick="window.open('${url}')" title="Click para ampliar">`;
+                }
+            }
+        }, 100);
+    }
+
+    // Status Report Upload Form
+    const uploadStatusHtml = `
+        <div style="background: var(--bg-layer-2); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+                <h4 style="margin: 0;">Reporte Gráfico</h4>
+                <button onclick="document.getElementById('status-imgs-input').click()" class="action-btn btn-secondary" style="width:auto; padding: 4px 8px; font-size: 12px;" title="Sube varias fotos del estado actual. Sobrescribirá el reporte anterior.">
+                    <span class="material-symbols-rounded" style="font-size: 16px;">add_photo_alternate</span> Seleccionar Fotos
+                </button>
+                <input type="file" id="status-imgs-input" accept="image/*" multiple style="display: none" onchange="window.previewStatusImages(this)">
+            </div>
+            
+            <form id="status-report-form" style="display: none; gap: 12px; flex-direction: column;">
+                <div id="status-imgs-preview" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;"></div>
+                <input type="text" name="author" placeholder="Tu Nombre / Responsable" required style="width: 100%;">
+                <div style="display:flex; justify-content: flex-end; gap: 8px;">
+                    <button type="button" onclick="window.cancelStatusReport()" class="action-btn" style="width: auto; background:transparent;">Cancelar</button>
+                    <button type="submit" id="btn-submit-status" class="action-btn btn-primary" style="width: auto;">Actualizar Reporte</button>
+                </div>
+            </form>
+        </div>
+    `;
+
     let historyHtml = '<div class="timeline">';
     [...item.history].reverse().forEach(h => {
         let dotColor = '#10B981'; // green default
@@ -535,7 +586,60 @@ async function renderDetail(container, id) {
     });
     historyHtml += '</div>';
 
+    // Status Report Gallery (Last Batch)
+    let statusGalleryHtml = '';
+    if (item.statusImages && item.statusImages.length > 0) {
+        statusGalleryHtml = `
+            <div style="margin-bottom: 24px; background: rgba(0,0,0,0.1); padding: 12px; border-radius: 8px; border: 1px dashed var(--bg-layer-3);">
+                <h4 style="margin: 0 0 12px 0; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); display:flex; align-items:center; gap:6px;">
+                    <span class="material-symbols-rounded" style="font-size:16px;">photo_library</span> 
+                    Último Reporte de Estado
+                </h4>
+                <div id="status-gallery-${item.id}" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;">
+                    <span style="color:var(--text-tertiary); font-size:12px;">Cargando imágenes...</span>
+                </div>
+            </div>
+        `;
+        
+        setTimeout(async () => {
+            const gallery = document.getElementById(`status-gallery-${item.id}`);
+            if(!gallery) return;
+            gallery.innerHTML = '';
+            for(let imgId of item.statusImages) {
+                const blob = await db.getImage(imgId);
+                if(blob) {
+                    const url = URL.createObjectURL(blob);
+                    gallery.innerHTML += `<img src="${url}" style="height: 100px; border-radius: 4px; object-fit: cover; border: 1px solid var(--bg-layer-3); cursor: pointer;" onclick="window.open('${url}')" title="Click para ampliar">`;
+                }
+            }
+        }, 100);
+    }
+
+    // Status Report Upload Form
+    const uploadStatusHtml = `
+        <div style="background: var(--bg-layer-2); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+                <h4 style="margin: 0;">Reporte Gráfico</h4>
+                <button onclick="document.getElementById('status-imgs-input').click()" class="action-btn btn-secondary" style="width:auto; padding: 4px 8px; font-size: 12px;" title="Sube varias fotos del estado actual. Sobrescribirá el reporte anterior.">
+                    <span class="material-symbols-rounded" style="font-size: 16px;">add_photo_alternate</span> Seleccionar Fotos
+                </button>
+                <input type="file" id="status-imgs-input" accept="image/*" multiple style="display: none" onchange="window.previewStatusImages(this)">
+            </div>
+            
+            <form id="status-report-form" style="display: none; gap: 12px; flex-direction: column;">
+                <div id="status-imgs-preview" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;"></div>
+                <input type="text" name="author" placeholder="Tu Nombre / Responsable" required style="width: 100%;">
+                <div style="display:flex; justify-content: flex-end; gap: 8px;">
+                    <button type="button" onclick="window.cancelStatusReport()" class="action-btn" style="width: auto; background:transparent;">Cancelar</button>
+                    <button type="submit" id="btn-submit-status" class="action-btn btn-primary" style="width: auto;">Actualizar Reporte</button>
+                </div>
+            </form>
+        </div>
+    `;
+
     right.innerHTML = `
+        ${statusGalleryHtml}
+        ${uploadStatusHtml}
         ${commentSection}
         <h3 style="margin: 0 0 20px 0; border-bottom: 1px solid var(--bg-layer-2); padding-bottom: 12px;">Bitácora de Movimientos</h3>
         <div style="flex: 1; overflow-y: auto;">
@@ -560,6 +664,48 @@ async function renderDetail(container, id) {
         await saveAll();
         renderDetail(container, id); // refresh list
     });
+
+    // Handle Status Report Submit
+    const statusForm = right.querySelector('#status-report-form');
+    if (statusForm) {
+        statusForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('status-imgs-input');
+            const files = fileInput.files;
+            if (!files || files.length === 0) return;
+
+            if (!checkAuth()) return;
+
+            const fd = new FormData(e.target);
+            const author = fd.get('author');
+
+            // Set updating state
+            const btn = document.getElementById('btn-submit-status');
+            btn.innerHTML = '<span class="material-symbols-rounded">sync</span> Subiendo...';
+            btn.disabled = true;
+
+            // Generate IDs and save new batch
+            const newStatusImages = [];
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const imgId = `${item.id}_status_${i}`;
+                await db.saveImage(imgId, file);
+                newStatusImages.push(imgId);
+            }
+
+            item.statusImages = newStatusImages;
+
+            item.history.push({
+                type: 'note',
+                person: author,
+                text: `Se actualizó el reporte gráfico de estado con ${files.length} foto(s).`,
+                date: new Date().toISOString()
+            });
+
+            await saveAll();
+            renderDetail(container, id);
+        });
+    }
 }
 
 function renderNewForm(container) {
@@ -832,4 +978,33 @@ window.printFicha = (id, name, warehouseId, imgUrl) => {
     setTimeout(() => {
         window.print();
     }, 500);
+};
+
+window.previewStatusImages = (input) => {
+    const files = input.files;
+    const previewContainer = document.getElementById('status-imgs-preview');
+    const form = document.getElementById('status-report-form');
+    
+    if (!files || files.length === 0) {
+        form.style.display = 'none';
+        return;
+    }
+    
+    form.style.display = 'flex';
+    previewContainer.innerHTML = '';
+    
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const url = URL.createObjectURL(file);
+        const img = document.createElement('img');
+        img.src = url;
+        img.style.cssText = 'height: 80px; border-radius: 4px; object-fit: cover; border: 1px solid var(--bg-layer-3);';
+        previewContainer.appendChild(img);
+    }
+};
+
+window.cancelStatusReport = () => {
+    document.getElementById('status-imgs-input').value = '';
+    document.getElementById('status-report-form').style.display = 'none';
+    document.getElementById('status-imgs-preview').innerHTML = '';
 };
