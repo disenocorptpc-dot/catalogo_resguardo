@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Resguardo 3D | Control de Bodega</title>
+    <title>Catálogo Resguardo 3D | Control de Bodega SOLULOGIS</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z'></path><polyline points='3.27 6.96 12 12.01 20.73 6.96'></polyline><line x1='12' y1='22.08' x2='12' y2='12'></line></svg>" />
-    <!-- Fonts: Inter for that clean SaaS/Time Tracker look -->
+    <!-- Fonts: Inter + JetBrains Mono for tabular IDs and dimensions -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Icons: Using Material Symbols for generic clean icons -->
+    <!-- Icons: Material Symbols Rounded -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
 
@@ -22,44 +22,59 @@
     <div class="app-layout">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="sidebar-header">
+            <div class="sidebar-header" onclick="navigate('inventory')" style="cursor: pointer;">
                 <div class="logo-box">
-                    <span class="material-symbols-rounded">category</span>
+                    <span class="material-symbols-rounded">deployed_code</span>
                 </div>
                 <div class="brand-text">
                     <h1>Catálogo<span class="dim">Resguardo3D</span></h1>
-                    <span class="subtitle">Bodega Central</span>
+                    <span class="subtitle">SOLULOGIS &bull; The Palace Co.</span>
                 </div>
             </div>
 
             <nav class="nav-menu">
                 <div class="nav-group">
-                    <label>Menu</label>
+                    <label>Operación</label>
                     <button class="nav-item active" data-view="inventory">
                         <span class="material-symbols-rounded">inventory_2</span>
-                        Inventario
+                        Inventario General
+                        <span id="nav-total-badge" class="nav-count-badge">0</span>
                     </button>
-                    <!-- Future: Checkouts/Entregas separate view -->
+                    <button class="nav-item" id="nav-grid-btn" onclick="window.setInventoryLayout('grid')">
+                        <span class="material-symbols-rounded">grid_view</span>
+                        Catálogo Visual
+                    </button>
                 </div>
 
                 <div class="nav-group">
-                    <label>Admin</label>
+                    <label>Temporadas</label>
+                    <div id="sidebar-categories" class="sidebar-cat-list">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+
+                <div class="nav-group">
+                    <label>Administración</label>
                     <button class="nav-item" data-view="new-item">
                         <span class="material-symbols-rounded">add_circle</span>
                         Nueva Pieza
                     </button>
-                    <button class="nav-item" onclick="alert('Configuración de Firebase pendiente')">
-                        <span class="material-symbols-rounded">settings</span>
-                        Configuración
+                    <button class="nav-item" onclick="window.exportInventoryCSV()">
+                        <span class="material-symbols-rounded">download</span>
+                        Exportar CSV
+                    </button>
+                    <button class="nav-item" id="admin-lock-btn" onclick="window.toggleAdminSession()">
+                        <span class="material-symbols-rounded" id="admin-lock-icon">lock</span>
+                        <span id="admin-lock-label">Desbloquear Edición</span>
                     </button>
                 </div>
             </nav>
 
             <div class="user-footer">
-                <div class="avatar">AB</div>
+                <div class="avatar">3D</div>
                 <div class="user-info">
-                    <span class="name">Admin Bodega</span>
-                    <span class="status">● Conectado</span>
+                    <span class="name">Coord. Impresión 3D</span>
+                    <span class="status" id="db-status-indicator">● Conectado a D1</span>
                 </div>
             </div>
         </aside>
@@ -68,35 +83,58 @@
         <main class="main-content">
             <header class="top-header">
                 <div class="breadcrumbs">
-                    <span id="page-title">Inventario</span>
+                    <button id="back-nav-btn" class="back-btn hidden" onclick="navigate('inventory')" title="Volver al inventario">
+                        <span class="material-symbols-rounded">arrow_back</span>
+                    </button>
+                    <span id="page-title" onclick="navigate('inventory')" style="cursor: pointer;">Inventario General</span>
                     <span id="page-subtitle" class="hidden"> / Detalle</span>
                 </div>
                 <div class="top-actions">
+                    <div class="view-switcher" id="header-view-switcher">
+                        <button type="button" class="view-btn active" id="btn-view-table" onclick="window.setInventoryLayout('table')" title="Vista de tabla operativa">
+                            <span class="material-symbols-rounded">table_rows</span>
+                            <span>Tabla</span>
+                        </button>
+                        <button type="button" class="view-btn" id="btn-view-grid" onclick="window.setInventoryLayout('grid')" title="Vista de catálogo visual">
+                            <span class="material-symbols-rounded">grid_view</span>
+                            <span>Tarjetas</span>
+                        </button>
+                    </div>
                     <div class="search-wrapper">
                         <span class="material-symbols-rounded icon">search</span>
-                        <input type="text" id="global-search" placeholder="Buscar por ID, nombre o bodega..."
+                        <input type="text" id="global-search" placeholder="Buscar por ID, nombre, temporada o medidas... (/)"
                             autocomplete="off">
+                        <button type="button" id="clear-search-btn" class="clear-search hidden" onclick="window.clearSearch()" title="Limpiar búsqueda">
+                            <span class="material-symbols-rounded">close</span>
+                        </button>
                     </div>
                 </div>
             </header>
 
             <div id="content-area" class="viewport">
-                <!-- Vistes inyectadas aquí -->
+                <!-- Vistas inyectadas aquí -->
             </div>
         </main>
     </div>
 
-    <!-- Firebase Import Map (Cloud connection) -->
-    <script type="importmap">
-    {
-        "imports": {
-            "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
-            "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js",
-            "firebase/storage": "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js",
-            "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"
-        }
-    }
-    </script>
+    <!-- Lightbox Modal -->
+    <div id="lightbox-modal" class="lightbox-overlay hidden" onclick="window.closeLightbox(event)">
+        <div class="lightbox-card" onclick="event.stopPropagation()">
+            <div class="lightbox-header">
+                <div>
+                    <div id="lightbox-title" class="lightbox-title">Pieza</div>
+                    <div id="lightbox-subtitle" class="lightbox-subtitle">ID</div>
+                </div>
+                <button type="button" class="lightbox-close" onclick="window.closeLightbox()">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+            <div class="lightbox-body">
+                <img id="lightbox-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Vista ampliada">
+            </div>
+        </div>
+    </div>
+
     <!-- Third Party Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 

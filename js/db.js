@@ -1,11 +1,13 @@
 class CloudDB {
     constructor() {
         this.isCloudflare = true;
+        this.blobCache = new Map();
+        this.urlCache = new Map();
+        this.inFlight = new Map();
     }
 
     async init() {
         console.log("🔐 Authenticating... (Cloudflare Mode)");
-        // D1 doesn't require client-side auth like Firebase, we connect via API endpoints.
         console.log("✅ Conectado a Cloudflare D1");
         return this;
     }
@@ -13,12 +15,16 @@ class CloudDB {
     async saveState(key, data) {
         try {
             console.log(`💾 Guardando estado en D1: ${key}`);
-            await fetch('/api/state', {
+            const res = await fetch('/api/state', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ key, data })
             });
-        } catch (e) { console.error("Save Error", e); }
+            return res.ok;
+        } catch (e) {
+            console.error("Save Error", e);
+            return false;
+        }
     }
 
     async getState(key) {
@@ -29,7 +35,9 @@ class CloudDB {
                 const data = await res.json();
                 if (data) return data;
             }
-        } catch (e) { console.error("Get Error", e); }
+        } catch (e) {
+            console.error("Get Error", e);
+        }
         return null;
     }
 
@@ -46,19 +54,62 @@ class CloudDB {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, base64 })
             });
-        } catch (e) { console.error("Image Save Error", e); }
+
+            // Update local cache immediately
+            const processedBlob = await (await fetch(base64)).blob();
+            if (this.urlCache.has(id)) {
+                URL.revokeObjectURL(this.urlCache.get(id));
+            }
+            this.blobCache.set(id, processedBlob);
+            this.urlCache.set(id, URL.createObjectURL(processedBlob));
+        } catch (e) {
+            console.error("Image Save Error", e);
+        }
     }
 
     async getImage(id) {
-        try {
-            const res = await fetch(`/api/image?id=${id}`);
-            if (res.ok) {
-                const data = await res.json();
-                if (data && data.base64) {
-                    return await (await fetch(data.base64)).blob();
+        if (!id) return null;
+        if (this.blobCache.has(id)) {
+            return this.blobCache.get(id);
+        }
+        if (this.inFlight.has(id)) {
+            return this.inFlight.get(id);
+        }
+
+        const promise = (async () => {
+            try {
+                const res = await fetch(`/api/image?id=${encodeURIComponent(id)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.base64) {
+                        const blob = await (await fetch(data.base64)).blob();
+                        this.blobCache.set(id, blob);
+                        return blob;
+                    }
                 }
+            } catch (e) {
+                // Silent fallback
+            } finally {
+                this.inFlight.delete(id);
             }
-        } catch (e) { }
+            return null;
+        })();
+
+        this.inFlight.set(id, promise);
+        return promise;
+    }
+
+    async getImageUrl(id) {
+        if (!id) return null;
+        if (this.urlCache.has(id)) {
+            return this.urlCache.get(id);
+        }
+        const blob = await this.getImage(id);
+        if (blob) {
+            const url = URL.createObjectURL(blob);
+            this.urlCache.set(id, url);
+            return url;
+        }
         return null;
     }
 
@@ -71,7 +122,6 @@ class CloudDB {
                 let width = img.width;
                 let height = img.height;
 
-                // Resize Max Dimension 1024px
                 const MAX_SIZE = 1024;
                 if (width > height) {
                     if (width > MAX_SIZE) {
@@ -90,8 +140,7 @@ class CloudDB {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
 
-                // Compress JPEG 70%
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.78);
                 console.log("📸 Image Processed:", Math.round(dataUrl.length / 1024) + "KB");
                 URL.revokeObjectURL(url);
                 resolve(dataUrl);
@@ -103,6 +152,4 @@ class CloudDB {
 }
 
 window.db = new CloudDB();
-
-// Emit event for app.js if needed (like odp_maker does, though not required if app.js awaits init)
 window.dispatchEvent(new Event('dbLoaded'));
