@@ -138,9 +138,10 @@ class CloudDB {
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, width, height);
                 ctx.drawImage(img, 0, 0, width, height);
 
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.78);
+                const dataUrl = canvas.toDataURL('image/webp', 0.85);
                 console.log("📸 Image Processed:", Math.round(dataUrl.length / 1024) + "KB");
                 URL.revokeObjectURL(url);
                 resolve(dataUrl);

@@ -1,6 +1,30 @@
 // --- PLACEHOLDER SVG ---
 const PLACEHOLDER_THUMB = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMTUwIDE1MCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiMyNzI3MmEiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTJweCIgZmlsbD0iIzcxNzE3YSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlNpbiBGb3RvPC90ZXh0Pjwvc3ZnPg==';
 
+// Official Palace Resorts Vector Logo extracted from etiquetas.ai
+const PALACE_RESORTS_LOGO_SVG = `<svg viewBox="635 519 123 62" xmlns="http://www.w3.org/2000/svg" class="palace-vector-logo" aria-label="Palace Resorts">
+    <path transform="matrix(1,0,0,-1,644.2159,571.2971)" d="M0 0C-.327 .2-.664 .285-1.74 .285H-5.986V-3.394H-1.74C-.752-3.394-.313-3.331 .064-3.057 .537-2.706 .775-2.08 .775-1.505 .775-.891 .537-.327 0 0M.588-3.732C.087-4.081-.601-4.222-.938-4.246L1.427-8.189H.438L-1.917-4.246H-5.986V-8.189H-6.861V1.15H-1.366C-.426 1.15-.15 1.073 .401 .775 1.176 .351 1.627-.728 1.627-1.54 1.627-2.329 1.236-3.27 .588-3.732" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,654.8868,579.4869)" d="M0 0V9.329H7.696V8.451H.836V5.248H4.581V4.395H.836V.854H7.998V0Z" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,675.3849,579.6979)" d="M0 0C-.816 0-1.616 .127-2.379 .401-3.331 .739-3.871 1.212-4.581 1.914L-3.992 2.528C-2.792 1.303-1.63 .865 .074 .865 1.326 .865 3.655 1.189 3.655 2.879 3.655 4.092 2.415 4.58 1.553 4.656 1.04 4.706-.2 4.694-.915 4.706-2.332 4.733-3.905 5.295-3.905 6.958-3.905 8.361-2.731 9.187-1.502 9.524-.926 9.688-.327 9.751 .26 9.751 1.715 9.751 2.829 9.276 3.979 8.411L3.455 7.773C2.315 8.498 1.502 8.913 .111 8.913-.29 8.913-.688 8.886-1.09 8.789-1.964 8.585-3.054 8.011-3.054 6.972-3.054 5.821-1.828 5.582-.915 5.558-.174 5.532 .935 5.532 1.627 5.482 3.19 5.358 4.517 4.479 4.517 2.89 4.517 .601 1.801 0 0 0" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,692.8904,570.7988)" d="M0 0C-2.255 0-4.205-1.651-4.205-3.979-4.205-6.36-2.368-8.034-.027-8.034 2.265-8.034 4.155-6.41 4.155-4.056 4.155-1.727 2.299 0 0 0M.011-8.889C-2.782-8.889-5.046-6.845-5.046-4.008-5.046-1.226-2.782 .841-.053 .841 2.724 .841 5.005-1.189 5.005-4.029 5.005-6.834 2.764-8.889 .011-8.889" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,713.5493,571.2971)" d="M0 0C-.324 .2-.664 .285-1.74 .285H-5.983V-3.394H-1.74C-.752-3.394-.313-3.331 .064-3.057 .537-2.706 .775-2.08 .775-1.505 .775-.891 .537-.327 0 0M.588-3.732C.087-4.081-.601-4.222-.938-4.246L1.427-8.189H.438L-1.914-4.246H-5.983V-8.189H-6.858V1.15H-1.364C-.424 1.15-.15 1.073 .401 .775 1.176 .351 1.627-.728 1.627-1.54 1.627-2.329 1.239-3.27 .588-3.732" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,727.7509,570.9992)" d="M0 0V-8.488H-.852V0H-4.432V.852H3.527V0Z" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,743.553,579.6979)" d="M0 0C-.816 0-1.613 .127-2.379 .401-3.328 .739-3.868 1.212-4.581 1.914L-3.992 2.528C-2.789 1.303-1.627 .865 .074 .865 1.329 .865 3.655 1.189 3.655 2.879 3.655 4.092 2.415 4.58 1.553 4.656 1.039 4.706-.2 4.694-.912 4.706-2.329 4.733-3.906 5.295-3.906 6.958-3.906 8.361-2.728 9.187-1.5 9.524-.926 9.688-.324 9.751 .263 9.751 1.716 9.751 2.832 9.276 3.979 8.411L3.455 7.773C2.318 8.498 1.502 8.913 .114 8.913-.287 8.913-.689 8.886-1.09 8.789-1.964 8.585-3.054 8.011-3.054 6.972-3.054 5.821-1.828 5.582-.912 5.558-.174 5.532 .935 5.532 1.627 5.482 3.19 5.358 4.52 4.479 4.52 2.89 4.52 .601 1.803 0 0 0" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,684.0176,527.9608)" d="M0 0 2.376-6.696 4.496-3.212Z" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,700.7744,534.3582)" d="M0 0-.598-1.931C9.777-2.582 19.032-4.548 26.173-7.294 20.541-3.579 11.127-.891 0 0M-42.293-7.294C-35.114-4.532-25.795-2.561-15.396-1.921L-16.071 .007C-27.169-.876-36.578-3.572-42.293-7.294M-14.521 .119-13.838-1.836C-11.957-1.747-10.045-1.698-8.103-1.698-6.083-1.698-4.094-1.749-2.141-1.846L-1.532 .111C-3.671 .249-5.865 .32-8.103 .32-10.288 .32-12.43 .25-14.521 .119" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,701.4387,527.98049)" d="M0 0-2.382-6.805-4.498-3.209Z" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,694.0189,529.297)" d="M0 0-1.323-1.327-2.653 0-1.323 1.327Z" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,692.1626,531.183)" d="M0 0-1.326-1.327-2.653 0-1.326 1.324Z" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,695.9384,531.183)" d="M0 0-1.326-1.327-2.653 0-1.326 1.324Z" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,646.8025,550.2091)" d="M0 0H-6.932V-4.492H0C1.497-4.492 2.349-3.764 2.349-2.224 2.349-.641 1.54 0 0 0M0-6.845H-6.932V-13.623H-9.26V2.332H0C2.824 2.332 4.661 .642 4.661-2.224 4.661-5.046 2.8-6.845 0-6.845" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,663.0054,550.6579)" d="M0 0-2.526-5.561H2.523ZM5.859-13.175 3.571-7.914H-3.594L-5.967-13.175H-8.493L-1.242 2.823H1.326L8.469-13.175Z" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,676.5715,563.8325)" d="M0 0V16.083H2.332V2.333H12.042V0Z" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,701.6655,550.6579)" d="M0 0-2.526-5.561H2.523ZM5.859-13.175 3.571-7.914H-3.594L-5.97-13.175H-8.49L-1.242 2.823H1.323L8.466-13.175Z" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,722.2955,564.2175)" d="M0 0C-4.921 0-8.983 3.293-8.983 8.404-8.983 13.238-5.239 16.726-.472 16.726 2.481 16.726 5.131 15.486 7.229 13.453L5.497 11.976C3.787 13.41 1.945 14.394-.343 14.394-3.85 14.394-6.695 11.976-6.695 8.363-6.695 4.492-3.444 2.353 .15 2.353 2.653 2.353 4.213 3.186 5.948 4.92L7.489 3.251C5.561 .984 2.93 0 0 0" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,734.3506,563.8325)" d="M0 0V15.976H13.129V13.623H2.329V9.451H7.763V7.144H2.329V2.333H13.537V0Z" fill="#606160"/>
+    <path transform="matrix(1,0,0,-1,753.0901,572.01699)" d="M0 0H.47C.871 0 1.306 .02 1.306 .503 1.306 .876 .965 .986 .652 .986H0ZM0-1.604H-.367V1.312H.755C1.414 1.312 1.671 1.026 1.671 .503 1.671-.034 1.331-.258 .937-.327L1.808-1.604H1.393L.524-.327H0ZM.55-2.318C1.747-2.318 2.712-1.353 2.712-.156 2.712 1.041 1.747 2.005 .55 2.005-.647 2.005-1.61 1.041-1.61-.156-1.61-1.353-.647-2.318 .55-2.318M.55 2.372C1.944 2.372 3.079 1.238 3.079-.156 3.079-1.55 1.944-2.685 .55-2.685-.844-2.685-1.979-1.55-1.979-.156-1.979 1.238-.844 2.372 .55 2.372" fill="#606160"/>
+</svg>`;
+
 const CATEGORIES = [
     'Villa Navideña',
     'Super Bowl',
@@ -44,11 +68,18 @@ const INITIAL_DATA = [
 // --- APP STATE ---
 let STATE = {
     items: [],
-    view: 'inventory', // 'inventory' | 'new-item' | 'detail:<id>'
+    view: 'inventory', // 'inventory' | 'new-item' | 'labels' | 'detail:<id>'
     layout: localStorage.getItem('resguardo_layout') || 'table', // 'table' | 'grid'
     filterCategory: 'ALL',
     filterLocation: 'ALL', // 'ALL' | 'SOLULOGIS' | 'taller' | 'propiedad' | 'CON_ID' | 'SIN_ID'
-    searchTerm: ''
+    searchTerm: '',
+    labelConfig: {
+        selectedIds: null, // Set of item.id
+        showQr: true,
+        showSpecs: false, // false by default so it matches etiquetas.ai 100%, with 1-click toggle to show specs
+        boxTheme: 'dark', // 'dark' (#606160) | 'light' (#d9d9d9) | 'outline'
+        categoryFilter: 'ALL'
+    }
 };
 
 let renderGeneration = 0;
@@ -119,6 +150,15 @@ function renderRouter() {
         if (backBtn) backBtn.classList.add('hidden');
         if (viewSwitcher) viewSwitcher.classList.remove('hidden');
         renderInventory(content);
+    } else if (STATE.view === 'labels') {
+        const lblBtn = document.querySelector('[data-view="labels"]');
+        if (lblBtn) lblBtn.classList.add('active');
+        pageTitle.textContent = 'Gestor de Etiquetas';
+        pageSub.textContent = ' / Diseño Oficial SOLULOGIS';
+        pageSub.classList.remove('hidden');
+        if (backBtn) backBtn.classList.remove('hidden');
+        if (viewSwitcher) viewSwitcher.classList.add('hidden');
+        renderLabelsManager(content);
     } else if (STATE.view === 'new-item') {
         const newBtn = document.querySelector('[data-view="new-item"]');
         if (newBtn) newBtn.classList.add('active');
@@ -1348,7 +1388,7 @@ function setupSearch() {
         if (clearBtn) {
             clearBtn.classList.toggle('hidden', !STATE.searchTerm);
         }
-        if (STATE.view !== 'inventory') {
+        if (STATE.view !== 'inventory' && STATE.view !== 'labels') {
             STATE.view = 'inventory';
         }
         renderRouter();
@@ -1364,7 +1404,7 @@ window.clearSearch = () => {
         input.focus();
     }
     if (clearBtn) clearBtn.classList.add('hidden');
-    if (STATE.view === 'inventory') renderRouter();
+    if (STATE.view === 'inventory' || STATE.view === 'labels') renderRouter();
 };
 
 function setupKeyboardShortcuts() {
@@ -1590,68 +1630,322 @@ window.closeLightbox = () => {
     if (modal) modal.classList.add('hidden');
 };
 
-// --- PRINT FICHA QR ---
-window.printFicha = async (id, fallbackName, fallbackWarehouseId, fallbackImgUrl) => {
-    const item = STATE.items.find(i => i.id === id) || {
-        id,
-        name: fallbackName || 'Pieza',
-        warehouseId: fallbackWarehouseId || 'Sin ID',
-        category: 'General',
-        dimensions: '—',
-        weight: '—',
-        quantity: '1 pza'
-    };
-
-    let imgUrl = fallbackImgUrl || PLACEHOLDER_THUMB;
-    if (!fallbackImgUrl && item.imageId) {
-        const cached = await db.getImageUrl(item.imageId);
-        if (cached) imgUrl = cached;
+// --- GESTOR DE ETIQUETAS (etiquetas.ai Studio) ---
+function ensureLabelSelection() {
+    if (!STATE.labelConfig.selectedIds) {
+        STATE.labelConfig.selectedIds = new Set(STATE.items.map(i => i.id));
     }
+}
 
-    const ficha = document.getElementById('print-ficha');
-    const baseUrl = window.location.origin + window.location.pathname;
-    const qrUrl = baseUrl + '?view=detail:' + item.id;
+window.selectLabelPreset = (mode) => {
+    ensureLabelSelection();
+    const visibleItems = getLabelFilteredItems();
+    if (mode === 'ALL') {
+        visibleItems.forEach(i => STATE.labelConfig.selectedIds.add(i.id));
+    } else if (mode === 'NONE') {
+        visibleItems.forEach(i => STATE.labelConfig.selectedIds.delete(i.id));
+    } else if (mode === 'CON_ID') {
+        STATE.labelConfig.selectedIds.clear();
+        STATE.items.forEach(i => {
+            if (i.warehouseId && i.warehouseId.toLowerCase() !== 'sin id') {
+                STATE.labelConfig.selectedIds.add(i.id);
+            }
+        });
+    } else if (mode === 'SIN_ID') {
+        STATE.labelConfig.selectedIds.clear();
+        STATE.items.forEach(i => {
+            if (!i.warehouseId || i.warehouseId.toLowerCase() === 'sin id') {
+                STATE.labelConfig.selectedIds.add(i.id);
+            }
+        });
+    }
+    renderLabelsManager(document.getElementById('content-area'));
+};
 
-    ficha.innerHTML = `
-        <div class="ficha-container">
-            <div class="ficha-header">Catálogo Resguardo 3D &bull; SOLULOGIS Central &bull; The Palace Company</div>
+window.toggleLabelItem = (id, checked) => {
+    ensureLabelSelection();
+    if (checked) {
+        STATE.labelConfig.selectedIds.add(id);
+    } else {
+        STATE.labelConfig.selectedIds.delete(id);
+    }
+    const card = document.getElementById(`lbl-card-${id}`);
+    if (card) card.classList.toggle('unselected', !checked);
+    const btnCount = document.getElementById('lbl-print-batch-count');
+    if (btnCount) btnCount.textContent = STATE.labelConfig.selectedIds.size;
+};
 
-            <div class="ficha-body">
-                <div class="ficha-img-wrapper">
-                    <img src="${imgUrl}" class="ficha-img">
-                </div>
+window.setLabelOption = (key, value) => {
+    STATE.labelConfig[key] = value;
+    renderLabelsManager(document.getElementById('content-area'));
+};
 
-                <div class="ficha-details">
-                    <div class="ficha-name-label">Temporada: ${escapeHtml(item.category || 'General')}</div>
-                    <div class="ficha-name">${escapeHtml(item.name)}</div>
+window.quickEditLabelData = async (id, field, value) => {
+    if (!checkAuth()) {
+        renderLabelsManager(document.getElementById('content-area'));
+        return;
+    }
+    const item = STATE.items.find(i => i.id === id);
+    if (!item) return;
+    let cleanValue = String(value || '').trim();
+    if (field === 'name' && !cleanValue) return;
+    if (field === 'warehouseId' && !cleanValue) cleanValue = 'Sin ID';
 
-                    <div class="ficha-id-label">ID de Inventario SOLULOGIS</div>
-                    <div class="ficha-id">${escapeHtml(item.warehouseId)}</div>
+    if (item[field] !== cleanValue) {
+        const oldVal = item[field];
+        item[field] = cleanValue;
+        item.history.push({
+            type: 'note',
+            person: 'Sistema',
+            text: `Se actualizó ${FIELD_LABELS[field] || field} de "${oldVal}" a "${cleanValue}" desde el Gestor de Etiquetas`,
+            date: new Date().toISOString()
+        });
+        await saveAll();
+    }
+    renderLabelsManager(document.getElementById('content-area'));
+};
 
-                    <div class="ficha-specs-table">
-                        <div><strong>Medidas:</strong> ${escapeHtml(item.dimensions || 'No registradas')}</div>
-                        <div><strong>Peso Estimado:</strong> ${escapeHtml(item.weight || 'No registrado')}</div>
-                        <div><strong>Cantidad:</strong> ${escapeHtml(item.quantity || '1 pza')}</div>
-                    </div>
+function getLabelFilteredItems() {
+    const term = STATE.searchTerm.trim().toLowerCase();
+    return STATE.items.filter(item => {
+        if (STATE.labelConfig.categoryFilter !== 'ALL' && (item.category || 'General') !== STATE.labelConfig.categoryFilter) {
+            return false;
+        }
+        if (term) {
+            const haystack = `${item.name} ${item.warehouseId} ${item.category} ${item.dimensions}`.toLowerCase();
+            if (!haystack.includes(term)) return false;
+        }
+        return true;
+    });
+}
 
-                    <div id="ficha-qr-code" class="ficha-qr"></div>
-                </div>
+function buildEtiquetaSheetHTML(item, imgUrl, qrContainerId, opts = {}) {
+    const showQr = opts.showQr !== undefined ? opts.showQr : STATE.labelConfig.showQr;
+    const showSpecs = opts.showSpecs !== undefined ? opts.showSpecs : STATE.labelConfig.showSpecs;
+    const boxTheme = opts.boxTheme || STATE.labelConfig.boxTheme || 'dark';
+
+    const boxClass = boxTheme === 'light' ? 'etq-box-light' : (boxTheme === 'outline' ? 'etq-box-outline' : 'etq-box-dark');
+
+    return `
+        <div class="etq-sheet">
+            <div class="etq-left ${boxClass}">
+                <img id="etq-img-${item.id}-${qrContainerId}" src="${imgUrl || PLACEHOLDER_THUMB}" class="etq-render-img" alt="${escapeHtml(item.name)}">
             </div>
+            <div class="etq-right">
+                <div class="etq-header-block">
+                    <div class="etq-title">${escapeHtml((item.name || '').toUpperCase())}</div>
+                    <div class="etq-id">${escapeHtml(item.warehouseId || 'SIN ID')}</div>
+                    ${showSpecs ? `
+                        <div class="etq-specs">
+                            ${item.dimensions ? `<div><strong>MEDIDAS:</strong> ${escapeHtml(item.dimensions)}</div>` : ''}
+                            <div>
+                                ${item.weight ? `<strong>PESO:</strong> ${escapeHtml(item.weight)}` : ''}
+                                ${item.quantity ? ` &bull; <strong>CANT:</strong> ${escapeHtml(item.quantity)}` : ''}
+                                ${item.category ? ` &bull; ${escapeHtml(item.category.toUpperCase())}` : ''}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
 
-            <div class="ficha-footer">
-                <span>Escanear QR para ver bitácora, estado y traslados en vivo</span>
-                <span style="color: #666;">Folio: ${escapeHtml(item.id)}</span>
+                ${showQr ? `
+                    <div class="etq-qr-block">
+                        <div id="${qrContainerId}" class="etq-qr-box"></div>
+                        <div class="etq-qr-caption">Escanear para bitácora y estatus</div>
+                    </div>
+                ` : '<div style="flex:1;"></div>'}
+
+                <div class="etq-logo-Wrap">
+                    ${PALACE_RESORTS_LOGO_SVG}
+                </div>
             </div>
         </div>
     `;
+}
 
-    new QRCode(document.getElementById('ficha-qr-code'), {
-        text: qrUrl,
-        width: 140,
-        height: 140,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
+function renderLabelsManager(container) {
+    const myGen = ++renderGeneration;
+    ensureLabelSelection();
+    container.innerHTML = '';
+
+    const items = getLabelFilteredItems();
+    const selectedCount = STATE.labelConfig.selectedIds.size;
+    const conIdTotal = STATE.items.filter(i => i.warehouseId && i.warehouseId.toLowerCase() !== 'sin id').length;
+    const sinIdTotal = STATE.items.length - conIdTotal;
+
+    const catOptions = [
+        `<option value="ALL" ${STATE.labelConfig.categoryFilter === 'ALL' ? 'selected' : ''}>Todas las temporadas (${STATE.items.length})</option>`,
+        ...CATEGORIES.map(c => {
+            const count = STATE.items.filter(i => (i.category || 'General') === c).length;
+            if (!count) return '';
+            return `<option value="${escapeHtml(c)}" ${STATE.labelConfig.categoryFilter === c ? 'selected' : ''}>${escapeHtml(c)} (${count})</option>`;
+        })
+    ].join('');
+
+    const toolbar = document.createElement('div');
+    toolbar.className = 'labels-studio-toolbar';
+    toolbar.innerHTML = `
+        <div class="labels-toolbar-top">
+            <div>
+                <h2 style="margin: 0 0 4px 0; font-size: 18px; display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-rounded" style="color: var(--primary);">badge</span>
+                    Gestor de Etiquetas SOLULOGIS (Formato Oficial Carta Horizontal)
+                </h2>
+                <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">
+                    Selecciona las piezas, personaliza si deseas incluir el código QR o las medidas, e imprime o guarda en PDF exactamente con la maquetación de <code>etiquetas.ai</code>.
+                </p>
+            </div>
+            <div class="labels-primary-actions">
+                <button type="button" class="action-btn btn-primary" style="width: auto; padding: 10px 18px; font-weight: 600;" onclick="window.printBatchLabels()">
+                    <span class="material-symbols-rounded">print</span>
+                    Imprimir / PDF Lote (<span id="lbl-print-batch-count">${selectedCount}</span>)
+                </button>
+            </div>
+        </div>
+
+        <div class="labels-toolbar-controls">
+            <div class="labels-control-group">
+                <span class="labels-group-label">Selección rápida:</span>
+                <button type="button" class="filter-pill" onclick="window.selectLabelPreset('ALL')">Todas (${STATE.items.length})</button>
+                <button type="button" class="filter-pill" onclick="window.selectLabelPreset('CON_ID')">Con ID (${conIdTotal})</button>
+                <button type="button" class="filter-pill" onclick="window.selectLabelPreset('SIN_ID')">Sin ID (${sinIdTotal})</button>
+                <button type="button" class="filter-pill" onclick="window.selectLabelPreset('NONE')">Limpiar</button>
+                <select style="width: auto; min-width: 200px;" onchange="window.setLabelOption('categoryFilter', this.value)">
+                    ${catOptions}
+                </select>
+            </div>
+
+            <div class="labels-control-group">
+                <span class="labels-group-label">Elementos en etiqueta:</span>
+                <label class="toggle-chip ${STATE.labelConfig.showQr ? 'active' : ''}">
+                    <input type="checkbox" ${STATE.labelConfig.showQr ? 'checked' : ''} onchange="window.setLabelOption('showQr', this.checked)">
+                    <span class="material-symbols-rounded" style="font-size: 16px;">qr_code_2</span>
+                    Código QR Bitácora
+                </label>
+                <label class="toggle-chip ${STATE.labelConfig.showSpecs ? 'active' : ''}">
+                    <input type="checkbox" ${STATE.labelConfig.showSpecs ? 'checked' : ''} onchange="window.setLabelOption('showSpecs', this.checked)">
+                    <span class="material-symbols-rounded" style="font-size: 16px;">straighten</span>
+                    Medidas y Peso
+                </label>
+                <select style="width: auto;" onchange="window.setLabelOption('boxTheme', this.value)" title="Color del recuadro izquierdo">
+                    <option value="dark" ${STATE.labelConfig.boxTheme === 'dark' ? 'selected' : ''}>Recuadro Gris Oficial (#606160)</option>
+                    <option value="light" ${STATE.labelConfig.boxTheme === 'light' ? 'selected' : ''}>Recuadro Gris Claro (#D9D9D9)</option>
+                    <option value="outline" ${STATE.labelConfig.boxTheme === 'outline' ? 'selected' : ''}>Fondo Blanco (Ahorro de tinta)</option>
+                </select>
+            </div>
+        </div>
+    `;
+    container.appendChild(toolbar);
+
+    const grid = document.createElement('div');
+    grid.className = 'labels-preview-grid';
+    container.appendChild(grid);
+
+    const baseUrl = window.location.origin + window.location.pathname;
+
+    items.forEach(item => {
+        const isSelected = STATE.labelConfig.selectedIds.has(item.id);
+        const qrId = `preview-qr-${item.id}`;
+        const card = document.createElement('div');
+        card.className = `label-studio-card ${isSelected ? '' : 'unselected'}`;
+        card.id = `lbl-card-${item.id}`;
+
+        card.innerHTML = `
+            <div class="label-card-topbar">
+                <label class="label-select-check">
+                    <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="window.toggleLabelItem('${item.id}', this.checked)">
+                    <span>Incluir en impresión</span>
+                </label>
+                <div class="label-quick-edit">
+                    <span style="font-size: 12px; color: var(--text-secondary);">ID SOLULOGIS:</span>
+                    <input type="text" value="${escapeHtml(item.warehouseId)}" class="label-id-input" onchange="window.quickEditLabelData('${item.id}', 'warehouseId', this.value)" title="Editar ID SOLULOGIS directamente">
+                    <button type="button" class="action-btn btn-secondary" style="width: auto; padding: 5px 10px; font-size: 12px;" onclick="window.printFicha('${item.id}')" title="Imprimir únicamente esta etiqueta">
+                        <span class="material-symbols-rounded" style="font-size: 16px;">print</span> Imprimir esta
+                    </button>
+                </div>
+            </div>
+            <div class="label-sheet-frame">
+                ${buildEtiquetaSheetHTML(item, PLACEHOLDER_THUMB, qrId)}
+            </div>
+        `;
+
+        grid.appendChild(card);
+
+        if (STATE.labelConfig.showQr) {
+            const qrEl = document.getElementById(qrId);
+            if (qrEl && window.QRCode) {
+                new QRCode(qrEl, {
+                    text: `${baseUrl}?view=detail:${item.id}`,
+                    width: 84,
+                    height: 84,
+                    colorDark: "#1d1d1b",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            }
+        }
+
+        if (item.imageId) {
+            db.getImageUrl(item.imageId).then(url => {
+                if (myGen !== renderGeneration || !url) return;
+                const imgEl = document.getElementById(`etq-img-${item.id}-${qrId}`);
+                if (imgEl) imgEl.src = url;
+            });
+        }
+    });
+}
+
+// --- PRINT FICHA / BATCH LABELS (Official etiquetas.ai Landscape Format) ---
+window.printFicha = async (id) => {
+    await window.printBatchLabels([id]);
+};
+
+window.printBatchLabels = async (explicitIds = null) => {
+    ensureLabelSelection();
+    const targetIds = explicitIds || Array.from(STATE.labelConfig.selectedIds);
+    const itemsToPrint = STATE.items.filter(i => targetIds.includes(i.id));
+
+    if (itemsToPrint.length === 0) {
+        alert('Selecciona al menos una pieza para imprimir su etiqueta.');
+        return;
+    }
+
+    const ficha = document.getElementById('print-ficha');
+    ficha.innerHTML = '';
+
+    const baseUrl = window.location.origin + window.location.pathname;
+    const qrTasks = [];
+
+    for (let idx = 0; idx < itemsToPrint.length; idx++) {
+        const item = itemsToPrint[idx];
+        let imgUrl = PLACEHOLDER_THUMB;
+        if (item.imageId) {
+            const cached = await db.getImageUrl(item.imageId);
+            if (cached) imgUrl = cached;
+        }
+
+        const qrId = `print-qr-${item.id}-${idx}`;
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'print-etiqueta-page';
+        pageDiv.innerHTML = buildEtiquetaSheetHTML(item, imgUrl, qrId);
+        ficha.appendChild(pageDiv);
+
+        if (STATE.labelConfig.showQr) {
+            qrTasks.push({ qrId, url: `${baseUrl}?view=detail:${item.id}` });
+        }
+    }
+
+    qrTasks.forEach(task => {
+        const el = document.getElementById(task.qrId);
+        if (el && window.QRCode) {
+            new QRCode(el, {
+                text: task.url,
+                width: 145,
+                height: 145,
+                colorDark: "#1d1d1b",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
     });
 
     setTimeout(() => {

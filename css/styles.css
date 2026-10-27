@@ -737,9 +737,10 @@ body {
     border-radius: 6px;
     overflow: hidden;
     border: 1px solid var(--bg-layer-3);
-    background: #d9d9d9;
+    background: #52525b;
     position: relative;
     cursor: zoom-in;
+    padding: 3px;
 }
 
 .cell-img {
@@ -964,7 +965,7 @@ body {
 .card-media {
     position: relative;
     aspect-ratio: 4 / 3;
-    background: #d9d9d9;
+    background: #52525b;
     overflow: hidden;
     border-bottom: 1px solid var(--bg-layer-2);
 }
@@ -1155,11 +1156,12 @@ body {
     position: relative;
     width: 100%;
     aspect-ratio: 1;
-    background: #d9d9d9;
+    background: #52525b;
     border-radius: var(--radius-md);
     overflow: hidden;
     border: 1px solid var(--bg-layer-3);
     margin-bottom: 12px;
+    padding: 12px;
 }
 
 .big-image {
@@ -1564,12 +1566,12 @@ select:focus {
 }
 
 .lightbox-body {
-    background: #d9d9d9;
+    background: #52525b;
     display: flex;
     align-items: center;
     justify-content: center;
     max-height: 75vh;
-    padding: 16px;
+    padding: 24px;
 }
 
 .lightbox-body img {
@@ -1578,12 +1580,290 @@ select:focus {
     object-fit: contain;
 }
 
+/* --- GESTOR DE ETIQUETAS (etiquetas.ai Studio) --- */
+.labels-studio-toolbar {
+    background: var(--bg-layer-1);
+    border: 1px solid var(--bg-layer-2);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.labels-toolbar-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.labels-toolbar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--bg-layer-2);
+    flex-wrap: wrap;
+}
+
+.labels-control-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.labels-group-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-right: 4px;
+}
+
+.toggle-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--bg-layer-3);
+    background: var(--bg-layer-0);
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s;
+}
+
+.toggle-chip input {
+    display: none;
+}
+
+.toggle-chip.active {
+    background: rgba(99, 102, 241, 0.14);
+    border-color: var(--primary);
+    color: var(--text-primary);
+}
+
+.labels-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(520px, 1fr));
+    gap: 20px;
+}
+
+.label-studio-card {
+    background: var(--bg-layer-1);
+    border: 1px solid var(--bg-layer-3);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.15s, border-color 0.15s;
+}
+
+.label-studio-card.unselected {
+    opacity: 0.55;
+    border-color: var(--bg-layer-2);
+}
+
+.label-card-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--bg-layer-2);
+    border-bottom: 1px solid var(--bg-layer-3);
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.label-select-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.label-select-check input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.label-quick-edit {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.label-id-input {
+    width: 110px;
+    padding: 4px 8px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #a5b4fc;
+    background: var(--bg-layer-0);
+}
+
+.label-sheet-frame {
+    padding: 16px;
+    background: #121215;
+}
+
+/* Official etiquetas.ai Sheet Layout (11 : 8.5 aspect ratio) */
+.etq-sheet {
+    width: 100%;
+    aspect-ratio: 11 / 8.5;
+    background: #ffffff;
+    color: #1d1d1b;
+    border-radius: 6px;
+    padding: 2.3%;
+    display: grid;
+    grid-template-columns: 48.2% 1fr;
+    gap: 4.5%;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.etq-left {
+    width: 100%;
+    height: 100%;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6%;
+    overflow: hidden;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.etq-box-dark {
+    background: #606160 !important;
+}
+
+.etq-box-light {
+    background: #d9d9d9 !important;
+}
+
+.etq-box-outline {
+    background: #ffffff !important;
+    border: 2px solid #d4d4d8;
+}
+
+.etq-render-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.etq-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 4% 2% 2% 0;
+    color: #1d1d1b;
+    min-width: 0;
+}
+
+.etq-header-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.etq-title {
+    font-size: clamp(16px, 2.1vw, 24px);
+    font-weight: 900;
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    color: #1d1d1b;
+    text-transform: uppercase;
+    word-break: break-word;
+}
+
+.etq-id {
+    font-size: clamp(16px, 2.1vw, 24px);
+    font-weight: 900;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    color: #1d1d1b;
+    font-variant-numeric: tabular-nums;
+}
+
+.etq-specs {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1.5px solid #e4e4e7;
+    font-size: 11.5px;
+    color: #3f3f46;
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+}
+
+.etq-qr-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin: auto 0;
+}
+
+.etq-qr-box {
+    padding: 6px;
+    background: #ffffff;
+    border: 1.5px solid #e4e4e7;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.etq-qr-box img,
+.etq-qr-box canvas {
+    display: block !important;
+}
+
+.etq-qr-caption {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #71717a;
+}
+
+.etq-logo-Wrap {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding-right: 4%;
+    padding-bottom: 1%;
+}
+
+.palace-vector-logo {
+    width: 118px;
+    height: auto;
+    display: block;
+}
+
 /* --- RESPONSIVE BREAKPOINTS --- */
 @media (max-width: 1100px) {
     .kpi-strip {
         grid-template-columns: repeat(3, 1fr);
     }
     .detail-container {
+        grid-template-columns: 1fr;
+    }
+    .labels-preview-grid {
         grid-template-columns: 1fr;
     }
 }
@@ -1615,7 +1895,7 @@ select:focus {
     }
 }
 
-/* --- PRINT STYLES (Ficha PDF) --- */
+/* --- PRINT STYLES (Official etiquetas.ai US Letter Landscape) --- */
 #print-ficha {
     display: none;
     color: var(--text-primary);
@@ -1623,143 +1903,97 @@ select:focus {
 
 @media print {
     @page {
-        size: letter;
-        margin: 1cm;
+        size: letter landscape;
+        margin: 0;
     }
 
+    html,
     body {
-        background: white !important;
-        color: black !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        color: #1d1d1b !important;
         font-family: 'Inter', -apple-system, sans-serif !important;
         overflow: visible !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
+
     .app-layout,
     .lightbox-overlay {
         display: none !important;
     }
+
     #print-ficha {
         display: block !important;
-        position: absolute;
-        left: 0;
-        top: 0;
         width: 100%;
-        background: white;
-        color: black;
+        background: #ffffff;
     }
 
-    .ficha-container {
-        border: 4px solid #000;
-        display: flex;
-        flex-direction: column;
+    .print-etiqueta-page {
+        width: 11in;
+        height: 8.5in;
+        page-break-after: always;
+        break-after: page;
         page-break-inside: avoid;
-        max-height: 25cm;
+        break-inside: avoid;
+        box-sizing: border-box;
+        overflow: hidden;
+        background: #ffffff;
     }
 
-    .ficha-header {
-        background: #000 !important;
-        color: #fff !important;
-        font-size: 16px;
-        font-weight: 800;
-        text-align: center;
-        padding: 14px;
-        text-transform: uppercase;
-        letter-spacing: 3px;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+    .print-etiqueta-page:last-child {
+        page-break-after: auto;
+        break-after: auto;
     }
 
-    .ficha-body {
-        display: flex;
-        padding: 36px;
-        gap: 40px;
-        align-items: flex-start;
+    .print-etiqueta-page .etq-sheet {
+        width: 11in;
+        height: 8.5in;
+        aspect-ratio: auto;
+        border-radius: 0;
+        padding: 0.2in;
+        grid-template-columns: 5.3in 1fr;
+        gap: 0.52in;
     }
 
-    .ficha-img-wrapper {
-        flex: 0 0 46%;
-        border: 2px solid #e4e4e7;
-        padding: 10px;
-        background: #fff;
+    .print-etiqueta-page .etq-left {
+        border-radius: 0.22in;
+        padding: 0.35in;
     }
 
-    .ficha-img {
-        width: 100%;
-        aspect-ratio: 1;
-        object-fit: contain;
+    .print-etiqueta-page .etq-right {
+        padding: 0.38in 0.35in 0.25in 0;
     }
 
-    .ficha-details {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .ficha-name-label {
-        font-size: 11px;
-        text-transform: uppercase;
-        color: #52525b;
-        margin-bottom: 4px;
-        font-weight: 700;
-        letter-spacing: 1px;
-    }
-
-    .ficha-name {
-        font-size: 28px;
+    .print-etiqueta-page .etq-title {
+        font-size: 26pt;
         font-weight: 900;
-        text-transform: uppercase;
-        line-height: 1.1;
-        margin-bottom: 24px;
-        color: #000;
+        line-height: 1.15;
     }
 
-    .ficha-id-label {
-        font-size: 11px;
-        text-transform: uppercase;
-        color: #52525b;
-        margin-bottom: 6px;
-        font-weight: 700;
-        letter-spacing: 1px;
+    .print-etiqueta-page .etq-id {
+        font-size: 26pt;
+        font-weight: 900;
+        line-height: 1.2;
     }
 
-    .ficha-id {
-        font-size: 38px;
-        font-family: monospace;
-        font-weight: bold;
-        background: #f4f4f5 !important;
-        padding: 12px 20px;
-        border-left: 8px solid #000;
-        margin-bottom: 20px;
-        color: #000;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+    .print-etiqueta-page .etq-specs {
+        margin-top: 14pt;
+        padding-top: 10pt;
+        font-size: 12pt;
     }
 
-    .ficha-specs-table {
-        width: 100%;
-        border-top: 1px solid #d4d4d8;
-        border-bottom: 1px solid #d4d4d8;
-        padding: 10px 0;
-        margin-bottom: 20px;
-        font-size: 13px;
-        line-height: 1.6;
-        color: #18181b;
+    .print-etiqueta-page .etq-qr-box {
+        padding: 10px;
+        border-width: 2px;
     }
 
-    .ficha-qr {
-        margin-top: auto;
-        padding: 12px;
-        border: 2px dashed #d4d4d8;
-        display: inline-block;
+    .print-etiqueta-page .etq-qr-caption {
+        font-size: 9.5pt;
     }
 
-    .ficha-footer {
-        border-top: 2px solid #000;
-        padding: 14px 36px;
-        font-size: 12px;
-        font-weight: 600;
-        display: flex;
-        justify-content: space-between;
-        color: #000;
+    .print-etiqueta-page .palace-vector-logo {
+        width: 1.7in;
     }
 }
