@@ -1722,7 +1722,8 @@ function getLabelFilteredItems() {
 function renderCleanQR(el, text, size) {
     if (!el || !window.QRCode) return;
     el.innerHTML = '';
-    new QRCode(el, {
+    const tempDiv = document.createElement('div');
+    new QRCode(tempDiv, {
         text: text,
         width: size,
         height: size,
@@ -1730,12 +1731,16 @@ function renderCleanQR(el, text, size) {
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.M
     });
-    // qrcode.js creates both <canvas> and <img>; keep only <canvas> (instant render, no async img load delay)
-    const canvas = el.querySelector('canvas');
-    const img = el.querySelector('img');
-    if (canvas && img) {
-        img.remove();
-        canvas.style.display = 'block';
+    const canvas = tempDiv.querySelector('canvas');
+    if (canvas) {
+        const dataUrl = canvas.toDataURL('image/png');
+        el.innerHTML = `<img src="${dataUrl}" width="${size}" height="${size}" style="display:block; width:${size}px; height:${size}px;" alt="QR">`;
+    } else {
+        const img = tempDiv.querySelector('img');
+        if (img) {
+            img.style.cssText = `display:block; width:${size}px; height:${size}px;`;
+            el.appendChild(img);
+        }
     }
 }
 
