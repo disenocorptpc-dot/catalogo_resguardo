@@ -1719,6 +1719,26 @@ function getLabelFilteredItems() {
     });
 }
 
+function renderCleanQR(el, text, size) {
+    if (!el || !window.QRCode) return;
+    el.innerHTML = '';
+    new QRCode(el, {
+        text: text,
+        width: size,
+        height: size,
+        colorDark: "#1d1d1b",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+    });
+    // qrcode.js creates both <canvas> and <img>; keep only <canvas> (instant render, no async img load delay)
+    const canvas = el.querySelector('canvas');
+    const img = el.querySelector('img');
+    if (canvas && img) {
+        img.remove();
+        canvas.style.display = 'block';
+    }
+}
+
 function buildEtiquetaSheetHTML(item, imgUrl, qrContainerId, opts = {}) {
     const showQr = opts.showQr !== undefined ? opts.showQr : STATE.labelConfig.showQr;
     const showSpecs = opts.showSpecs !== undefined ? opts.showSpecs : STATE.labelConfig.showSpecs;
@@ -1747,15 +1767,17 @@ function buildEtiquetaSheetHTML(item, imgUrl, qrContainerId, opts = {}) {
                     ` : ''}
                 </div>
 
-                ${showQr ? `
-                    <div class="etq-qr-block">
-                        <div id="${qrContainerId}" class="etq-qr-box"></div>
-                        <div class="etq-qr-caption">Escanear para bitácora y estatus</div>
-                    </div>
-                ` : '<div style="flex:1;"></div>'}
+                <div class="etq-bottom-row">
+                    ${showQr ? `
+                        <div class="etq-qr-block">
+                            <div id="${qrContainerId}" class="etq-qr-box"></div>
+                            <div class="etq-qr-caption">Escanear bitácora</div>
+                        </div>
+                    ` : '<div></div>'}
 
-                <div class="etq-logo-Wrap">
-                    ${PALACE_RESORTS_LOGO_SVG}
+                    <div class="etq-logo-Wrap">
+                        ${PALACE_RESORTS_LOGO_SVG}
+                    </div>
                 </div>
             </div>
         </div>
@@ -1872,16 +1894,7 @@ function renderLabelsManager(container) {
 
         if (STATE.labelConfig.showQr) {
             const qrEl = document.getElementById(qrId);
-            if (qrEl && window.QRCode) {
-                new QRCode(qrEl, {
-                    text: `${baseUrl}?view=detail:${item.id}`,
-                    width: 84,
-                    height: 84,
-                    colorDark: "#1d1d1b",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.M
-                });
-            }
+            renderCleanQR(qrEl, `${baseUrl}?view=detail:${item.id}`, 78);
         }
 
         if (item.imageId) {
@@ -1936,16 +1949,7 @@ window.printBatchLabels = async (explicitIds = null) => {
 
     qrTasks.forEach(task => {
         const el = document.getElementById(task.qrId);
-        if (el && window.QRCode) {
-            new QRCode(el, {
-                text: task.url,
-                width: 145,
-                height: 145,
-                colorDark: "#1d1d1b",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        }
+        renderCleanQR(el, task.url, 136);
     });
 
     setTimeout(() => {
